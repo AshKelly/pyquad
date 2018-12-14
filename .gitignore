@@ -3,3 +3,4 @@ pyquad.egg-info
 env/
 build/
 pyquad/pyquad.c
+__pycache__
