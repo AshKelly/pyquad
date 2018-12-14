@@ -1,0 +1,5 @@
+*.so
+pyquad.egg-info
+env/
+build/
+pyquad/pyquad.c
