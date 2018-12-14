@@ -6,6 +6,19 @@ import inspect
 import numba
 from numba import cfunc
 
+from libc.stdlib cimport malloc, free
+
+cfunc_sigs = {}
+cfunc_sigs[1] = "float64(float64)"
+cfunc_sigs[2] = "float64(float64, float64)"
+cfunc_sigs[3] = "float64(float64, float64, float64)"
+cfunc_sigs[4] = "float64(float64, float64, float64, float64)"
+cfunc_sigs[5] = "float64(float64, float64, float64, float64, float64)"
+cfunc_sigs[6] = "float64(float64, float64, float64, float64, float64, float64)"
+cfunc_sigs[7] = "float64(float64, float64, float64, float64, float64, float64, float64)"
+cfunc_sigs[8] = "float64(float64, float64, float64, float64, float64, float64, float64, float64)"
+cfunc_sigs[9] = "float64(float64, float64, float64, float64, float64, float64, float64, float64, float64)"
+
 cdef extern from "quad.c":
     ctypedef double (*integrand)(double,  ...)
 
@@ -13,42 +26,82 @@ cdef extern from "quad.c":
         double * args
         integrand func
 
-    cdef void _quad(int num_args, void * args, double * result, double * error)
-    cdef void _quad_grid(int num_args, params args, int num, double * grid1,
-                         double * grid2, double * result, double * error)
+    cdef void _quad(int num_args, double a, double b, void * args,
+                    double * result, double * error)
+    cdef void _quad_grid(int num_args,  double a, double b, params args,
+                         int num, double * grid1, double * grid2,
+                         double * result, double * error)
+    cdef void _quad_grid_parallel(int num_args,  double a, double b, params args,
+                         int num, double * grid1, double * grid2,
+                         double * result, double * error)
 
 
-def quad(numba_integrand, np.float64_t[:] args):
-    # Grab a pointer to the jitted function
+def quad(py_integrand, double a, double b, args):
+    num_args = len(args)
+    numba_integrand = cfunc(cfunc_sigs[num_args+1], nopython=True, cache=True)(py_integrand)
     cdef integrand f = <integrand><size_t>numba_integrand.address
     cdef double result = 0.0
     cdef double error = 0.0
 
     # Parameter stucture
     cdef params p
-    p.args = &args[0]
+    p.args = <double *> malloc(sizeof(double) * num_args)
+    for i in range(num_args):
+        p.args[i] = args[i]
     p.func = f
 
     # Perform integral
-    _quad(args.shape[0], <void *>&p, &result, &error);
+    _quad(num_args, a, b,  <void *>&p, &result, &error);
+
+    free(p.args)
 
     return result
 
 
-def quad_grid(numba_integrand, np.float64_t[::1, :] grid, np.float64_t[:] args):
-    # Grab a pointer to the jitted function
+def quad_grid(py_integrand, double a, double b, np.float64_t[::1, :] grid,
+              args):
+    num_args = len(args)
+    numba_integrand = cfunc(cfunc_sigs[num_args+3], nopython=True, cache=True)(py_integrand)
     cdef integrand f = <integrand><size_t>numba_integrand.address
     cdef int num = grid.shape[0]
-    cdef np.float64_t[:] result, error
-    result = np.zeros(num, "float64")
-    error = np.zeros(num, "float64")
+    cdef np.float64_t[:] result = np.zeros(num, "float64")
+    cdef np.float64_t[:] error = np.zeros(num, "float64")
 
     # Parameter stucture
     cdef params p
-    p.args = &args[0]
+    p.args = <double *> malloc(sizeof(double) * num_args)
+    for i in range(num_args):
+        p.args[i] = args[i]
     p.func = f
 
-    _quad_grid(args.shape[0], p, num, &grid[0, 0], &grid[0, 1],
+    _quad_grid(num_args, a, b, p, num, &grid[0, 0], &grid[0, 1],
+               &result[0], &error[0])
+
+    free(p.args)
+
+    return np.asarray(result)
+
+
+def parallel_quad_grid(py_integrand, double a, double b, np.float64_t[::1, :] grid,
+                       args):
+    # Grab a pointer to the jitted function
+    num_args = len(args)
+    numba_integrand = cfunc(cfunc_sigs[num_args+3], nopython=True, cache=True)(py_integrand)
+    cdef integrand f = <integrand><size_t>numba_integrand.address
+    cdef int num = grid.shape[0]
+    cdef np.float64_t[:] result = np.zeros(num, "float64")
+    cdef np.float64_t[:] error = np.zeros(num, "float64")
+
+    # Parameter stucture
+    cdef params p
+    p.args = <double *> malloc(sizeof(double) * num_args)
+    for i in range(num_args):
+        p.args[i] = args[i]
+    p.func = f
+
+    _quad_grid_parallel(num_args + 2, a, b, p, num, &grid[0, 0], &grid[0, 1],
                &result[0], &error[0]);
+
+    free(p.args)
 
     return np.asarray(result)
