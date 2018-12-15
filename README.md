@@ -85,11 +85,19 @@ pytest tests
 inside the pyquad folder. You will need to install pytest for this (`pip
 install pytest --user`)
 
-## Examples
+## History
+
+I started to write components of this to help speed up some integrals for
+[PyAutoLens](https://github.com/Jammy2211/PyAutoLens/). As it happened, a few
+other people in my department were also interested. I attempted to neaten up
+the API and roll it out for easy use.
+
+If you want to contribute or want any extra feature implementing please just
+get in touch via email or a pull request.
 
 ## Authors
 
-* **Ashley Kelly**
+* **Ashley Kelly** (a.j.kelly@durham.ac.uk)
 
 ## License
 
