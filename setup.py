@@ -3,8 +3,6 @@ from setuptools.extension import Extension
 import os
 import numpy as np
 
-VERSION = "0.1"
-
 link_args = ['-fopenmp', '-lgsl', '-lblas']
 if os.name == "nt":
     std_libs = []
@@ -14,6 +12,13 @@ else:
 setup(
     name='pyquad',
     version='0.0.1',
+    author="Ashley J Kelly",
+    author_email="a.j.kelly@durham.ac.uk",
+    description="A python wrapper for the GSL integration routines",
+    url="https://github.com/AshKelly/pyquad",
+    classifiers=[
+        "Programming Language :: Python :: 3",
+    ],
     install_requires=['numba', 'scipy', 'pytest'],
     ext_modules=[Extension("pyquad",
                            ["pyquad/pyquad.pyx"],
