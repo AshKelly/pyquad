@@ -14,7 +14,7 @@ else:
 setup(
     name='pyquad',
     version='0.0.1',
-    install_requires=['numba', 'scipy'],
+    install_requires=['numba', 'scipy', 'pytest'],
     ext_modules=[Extension("pyquad",
                            ["pyquad/pyquad.pyx"],
                            extra_compile_args=link_args,

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <math.h> // required for fabs()
 #include <gsl/gsl_integration.h>
+#include <gsl/gsl_errno.h>
 #include <time.h>
 #include <omp.h>
 
@@ -86,29 +87,32 @@ integrand_wrapper select_integrand(int num_args){
    }
 }
 
-void _quad(int num_args, double a, double b, void * p, double * result, double * error){
-    gsl_integration_workspace * w = gsl_integration_workspace_alloc (50);
+void _quad(int num_args, double a, double b, void * p, double epsabs,
+           double epsrel, size_t limit, double * result, double * error){
+    gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
 
+    gsl_set_error_handler_off();
     gsl_function gfunc;
     gfunc.function = select_integrand(num_args);
     gfunc.params = p;
 
-    gsl_integration_qags(&gfunc, a, b, 1e-7, 1e-7, 50, w, result, error);
+    gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, result, error);
     gsl_integration_workspace_free(w);
 }
 
 void _quad_grid(int num_args, double a, double b, params ps, int num, double * grid1,
-        double * grid2, double * result, double * error){
-
+                double * grid2, double epsabs, double epsrel, size_t limit,
+                double * result, double * error){
     // Extend the args array and add the grid args
-    double * grid_args = malloc(sizeof(double) * (num_args + 2));
+    double * grid_args = (double *) malloc(sizeof(double) * (num_args + 2));
     for(int i=0; i<num_args; i++){
         grid_args[i + 2] = ps.args[i];
     }
     ps.args = &grid_args[0];
 
     // Set up the integration wroskapce
-    gsl_integration_workspace * w = gsl_integration_workspace_alloc(50);
+    gsl_set_error_handler_off();
+    gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
     gsl_function gfunc;
     gfunc.function = select_integrand(num_args + 2);
     gfunc.params = (void *)&ps;
@@ -116,7 +120,7 @@ void _quad_grid(int num_args, double a, double b, params ps, int num, double * g
     for(int i=0; i<num; i++){
         ps.args[0] = grid1[i];
         ps.args[1] = grid2[i];
-        gsl_integration_qags(&gfunc, a, b, 1e-7, 1e-7, 50, w, &result[i], &error[i]);
+        gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, &result[i], &error[i]);
     }
 
     free(grid_args);
@@ -124,20 +128,22 @@ void _quad_grid(int num_args, double a, double b, params ps, int num, double * g
 }
 
 void _quad_grid_parallel(int num_args, double a, double b, params ps, int num,
-                         double * grid1, double * grid2, double * result,
+                         double * grid1, double * grid2, double epsabs,
+                         double epsrel, size_t limit, double * result,
                          double * error){
     omp_set_num_threads(8);
     #pragma omp parallel firstprivate(ps) shared(a, b, grid1, grid2, result, error)
     {
     // Extend the args array and add the grid args
-    double * grid_args = malloc(sizeof(double) * (num_args + 2));
+    double * grid_args = (double *) malloc(sizeof(double) * (num_args + 2));
     for(int i=0; i<num_args; i++){
         grid_args[i + 2] = ps.args[i];
     }
     ps.args = &grid_args[0];
 
     // Set up the integration wroskapce
-    gsl_integration_workspace * w = gsl_integration_workspace_alloc(50);
+    gsl_set_error_handler_off();
+    gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
     gsl_function gfunc;
     gfunc.function = select_integrand(num_args + 2);
     gfunc.params = (void *)&ps;
@@ -146,7 +152,7 @@ void _quad_grid_parallel(int num_args, double a, double b, params ps, int num,
     for(int i=0; i<num; i++){
         ps.args[0] = grid1[i];
         ps.args[1] = grid2[i];
-        gsl_integration_qags(&gfunc, a, b, 1e-7, 1e-7, 50, w, &result[i], &error[i]);
+        gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, &result[i], &error[i]);
     }
 
     free(grid_args);
