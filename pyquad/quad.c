@@ -1,18 +1,24 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h> // required for fabs()
+
+#include <math.h>
+#include <time.h>
+
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_errno.h>
-#include <time.h>
+
 #include <omp.h>
+
 
 typedef double (*integrand)(double, ...);
 typedef double (*integrand_wrapper)(double, void *);
+
 
 typedef struct{
     double * args;
     integrand func;
 } params;
+
 
 static double integrand_0(double x, void * vp){
     params * p = (params *)vp;

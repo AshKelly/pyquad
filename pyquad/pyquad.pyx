@@ -1,12 +1,14 @@
+
 cimport cython
 cimport numpy as np
-import numpy as np
 
 import inspect
 import numba
-from numba import cfunc
+import numpy as np
 
+from numba import cfunc
 from libc.stdlib cimport malloc, free
+
 
 cfunc_sigs = {}
 cfunc_sigs[1] = "float64(float64)"
@@ -21,6 +23,7 @@ cfunc_sigs[9] = "float64(float64, float64, float64, float64, float64, float64, f
 cfunc_sigs[10] = "float64(float64, float64, float64, float64, float64, float64, float64, float64, float64, float64)"
 cfunc_sigs[11] = "float64(float64, float64, float64, float64, float64, float64, float64, float64, float64, float64, float64)"
 cfunc_sigs[12] = "float64(float64, float64, float64, float64, float64, float64, float64, float64, float64, float64, float64, float64)"
+
 
 cdef extern from "quad.c":
     ctypedef double (*integrand)(double,  ...)
@@ -66,7 +69,7 @@ def quad(py_integrand, double a, double b, args, epsabs=1e-7, epsrel=1e-7,
 
 
 def quad_grid(py_integrand, double a, double b, np.float64_t[:, :] grid,
-              args, epsabs=1e-7, epsrel=1e-7, limit=200):
+              args, epsabs=1e-7, epsrel=1e-7, limit=200, parallel=False):
     num_args = len(args)
     numba_integrand = cfunc(cfunc_sigs[num_args+3], nopython=True, cache=True)(py_integrand)
     cdef integrand f = <integrand><size_t>numba_integrand.address
@@ -81,35 +84,16 @@ def quad_grid(py_integrand, double a, double b, np.float64_t[:, :] grid,
         p.args[i] = args[i]
     p.func = f
 
+    # Make sure the array is fortran contiguous
     grid = np.asfortranarray(grid)
-    _quad_grid(num_args, a, b, p, num, &grid[0, 0], &grid[0, 1], epsabs,
-               epsrel, limit, &result[0], &error[0])
 
-    free(p.args)
+    if parallel:
+        _quad_grid_parallel(num_args, a, b, p, num, &grid[0, 0], &grid[0, 1],
+                            epsabs, epsrel, limit, &result[0], &error[0])
 
-    return np.asarray(result), np.asarray(error)
-
-
-def parallel_quad_grid(py_integrand, double a, double b, np.float64_t[:, :] grid,
-                       args, epsabs=1e-7, epsrel=1e-7, limit=200):
-    # Grab a pointer to the jitted function
-    num_args = len(args)
-    numba_integrand = cfunc(cfunc_sigs[num_args+3], nopython=True, cache=True)(py_integrand)
-    cdef integrand f = <integrand><size_t>numba_integrand.address
-    cdef int num = grid.shape[0]
-    cdef np.float64_t[:] result = np.zeros(num, "float64")
-    cdef np.float64_t[:] error = np.zeros(num, "float64")
-
-    # Parameter stucture
-    cdef params p
-    p.args = <double *> malloc(sizeof(double) * num_args)
-    for i in range(num_args):
-        p.args[i] = args[i]
-    p.func = f
-
-    grid = np.asfortranarray(grid)
-    _quad_grid_parallel(num_args + 2, a, b, p, num, &grid[0, 0], &grid[0, 1],
-               epsabs, epsrel, limit, &result[0], &error[0]);
+    else:
+        _quad_grid(num_args, a, b, p, num, &grid[0, 0], &grid[0, 1], epsabs,
+                   epsrel, limit, &result[0], &error[0])
 
     free(p.args)
 
