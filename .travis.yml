@@ -28,7 +28,7 @@ install:
     $PIP install --upgrade pip
     $PIP install --upgrade wheel
     $PIP install --upgrade setuptools
-    $PIP install numpy==1.15.3 cython==0.29
+    $PIP install numpy
     $PIP install -e .
 jobs:
   include:
