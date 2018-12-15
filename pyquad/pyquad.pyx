@@ -65,7 +65,7 @@ def quad(py_integrand, double a, double b, args, epsabs=1e-7, epsrel=1e-7,
     return result, error
 
 
-def quad_grid(py_integrand, double a, double b, np.float64_t[::1, :] grid,
+def quad_grid(py_integrand, double a, double b, np.float64_t[:, :] grid,
               args, epsabs=1e-7, epsrel=1e-7, limit=200):
     num_args = len(args)
     numba_integrand = cfunc(cfunc_sigs[num_args+3], nopython=True, cache=True)(py_integrand)
@@ -81,6 +81,7 @@ def quad_grid(py_integrand, double a, double b, np.float64_t[::1, :] grid,
         p.args[i] = args[i]
     p.func = f
 
+    grid = np.asfortranarray(grid)
     _quad_grid(num_args, a, b, p, num, &grid[0, 0], &grid[0, 1], epsabs,
                epsrel, limit, &result[0], &error[0])
 
@@ -89,7 +90,7 @@ def quad_grid(py_integrand, double a, double b, np.float64_t[::1, :] grid,
     return np.asarray(result), np.asarray(error)
 
 
-def parallel_quad_grid(py_integrand, double a, double b, np.float64_t[::1, :] grid,
+def parallel_quad_grid(py_integrand, double a, double b, np.float64_t[:, :] grid,
                        args, epsabs=1e-7, epsrel=1e-7, limit=200):
     # Grab a pointer to the jitted function
     num_args = len(args)
@@ -106,6 +107,7 @@ def parallel_quad_grid(py_integrand, double a, double b, np.float64_t[::1, :] gr
         p.args[i] = args[i]
     p.func = f
 
+    grid = np.asfortranarray(grid)
     _quad_grid_parallel(num_args + 2, a, b, p, num, &grid[0, 0], &grid[0, 1],
                epsabs, epsrel, limit, &result[0], &error[0]);
 
