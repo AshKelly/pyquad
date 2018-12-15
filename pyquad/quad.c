@@ -62,6 +62,32 @@ static double integrand_8(double x, void * vp){
                    p->args[5], p->args[6], p->args[7]);
 }
 
+static double integrand_9(double x, void * vp){
+    params * p = (params *)vp;
+    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
+                   p->args[5], p->args[6], p->args[7], p->args[8]);
+}
+
+static double integrand_10(double x, void * vp){
+    params * p = (params *)vp;
+    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
+                   p->args[5], p->args[6], p->args[7], p->args[8], p->args[9]);
+}
+
+static double integrand_11(double x, void * vp){
+    params * p = (params *)vp;
+    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
+                   p->args[5], p->args[6], p->args[7], p->args[8], p->args[9],
+                   p->args[10]);
+}
+
+static double integrand_12(double x, void * vp){
+    params * p = (params *)vp;
+    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
+                   p->args[5], p->args[6], p->args[7], p->args[8], p->args[9],
+                   p->args[10], p->args[11]);
+}
+
 integrand_wrapper select_integrand(int num_args){
     switch(num_args) {
       case 0:
@@ -82,6 +108,14 @@ integrand_wrapper select_integrand(int num_args){
         return integrand_7;
       case 8:
         return integrand_8;
+      case 9:
+        return integrand_9;
+      case 10:
+        return integrand_10;
+      case 11:
+        return integrand_11;
+      case 12:
+        return integrand_12;
       default:
         return integrand_0;
    }
@@ -148,7 +182,7 @@ void _quad_grid_parallel(int num_args, double a, double b, params ps, int num,
     gfunc.function = select_integrand(num_args + 2);
     gfunc.params = (void *)&ps;
 
-    #pragma omp for
+    #pragma omp for schedule(static, 5000)
     for(int i=0; i<num; i++){
         ps.args[0] = grid1[i];
         ps.args[1] = grid2[i];

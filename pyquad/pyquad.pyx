@@ -18,6 +18,9 @@ cfunc_sigs[6] = "float64(float64, float64, float64, float64, float64, float64)"
 cfunc_sigs[7] = "float64(float64, float64, float64, float64, float64, float64, float64)"
 cfunc_sigs[8] = "float64(float64, float64, float64, float64, float64, float64, float64, float64)"
 cfunc_sigs[9] = "float64(float64, float64, float64, float64, float64, float64, float64, float64, float64)"
+cfunc_sigs[10] = "float64(float64, float64, float64, float64, float64, float64, float64, float64, float64, float64)"
+cfunc_sigs[11] = "float64(float64, float64, float64, float64, float64, float64, float64, float64, float64, float64, float64)"
+cfunc_sigs[12] = "float64(float64, float64, float64, float64, float64, float64, float64, float64, float64, float64, float64, float64)"
 
 cdef extern from "quad.c":
     ctypedef double (*integrand)(double,  ...)
