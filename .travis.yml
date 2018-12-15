@@ -40,7 +40,3 @@ jobs:
     - stage: tests
       python: 3.7
       script: pytest tests/
-
-script:
-  - $PIP install cibuildwheel==0.10.0
-  - cibuildwheel --output-dir wheelhouse
