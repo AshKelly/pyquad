@@ -1,7 +1,10 @@
 # pyquad
 
-A drop-in replacment for `scipy.integrate.quad` which is much faster when
-doing repeat integrals over a range of parameters.
+A drop-in replacment for `scipy.integrate.quad` which is much faster for repeat
+integrals over a parameter space.
+
+The library provides a thin, parallel wrapper for the [GNU Scientific Library (GSL)
+integration routines](https://www.gnu.org/software/gsl/).
 
 ## Examples
 
