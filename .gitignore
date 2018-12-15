@@ -4,3 +4,4 @@ env/
 build/
 pyquad/pyquad.c
 __pycache__
+dist/

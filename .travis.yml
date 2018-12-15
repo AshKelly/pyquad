@@ -1,0 +1,41 @@
+language: python
+dist: xenial
+sudo: required
+cache:
+  pip: true
+  directories:
+    - $HOME/.ccache  # https://github.com/travis-ci/travis-ci/issues/5853
+
+addons:
+  apt:
+    packages:
+      - libgsl-dev
+      - libblas-dev
+
+env:
+  global:
+    PIP=pip
+
+env:
+  global:
+    PIP=pip
+
+install:
+  - |
+    # setup environment
+    ccache -s
+    # Upgrade pip and setuptools and wheel to get clean install
+    $PIP install --upgrade pip
+    $PIP install --upgrade wheel
+    $PIP install --upgrade setuptools
+    $PIP install numpy==1.15.3 cython==0.29
+    $PIP install -e .
+jobs:
+  include:
+    - stage: tests
+      python: 3.6
+      script: pytest tests/
+
+    - stage: tests
+      python: 3.7
+      script: pytest tests/

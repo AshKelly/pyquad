@@ -11,7 +11,7 @@ else:
 
 setup(
     name='pyquad',
-    version='0.0.1',
+    version='0.0.4',
     author="Ashley J Kelly",
     author_email="a.j.kelly@durham.ac.uk",
     description="A python wrapper for the GSL integration routines",
@@ -19,7 +19,6 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
-    install_requires=['numba', 'scipy', 'pytest'],
     ext_modules=[Extension("pyquad",
                            ["pyquad/pyquad.pyx"],
                            extra_compile_args=link_args,
