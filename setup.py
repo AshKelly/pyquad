@@ -19,7 +19,7 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
-    install_requires=['cython', 'scipy', 'pytest'],
+    install_requires=['cython', 'scipy', 'pytest', 'numba'],
     ext_modules=[Extension("pyquad",
                            ["pyquad/pyquad.pyx"],
                            extra_compile_args=link_args,
