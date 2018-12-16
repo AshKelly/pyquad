@@ -1,6 +1,6 @@
 from setuptools import setup
 from setuptools.extension import Extension
-from setupext import check_for_openmp
+import sys
 import os
 
 try:
@@ -13,7 +13,9 @@ cython and numpy to be installed. Please install these packages using
 the appropriate package manager for your python environment.""")
 
 link_args = ['-lgsl', '-lblas']
-if check_for_openmp() is True:
+
+if '--openmp' in sys.argv:
+    sys.argv.remove('--openmp')
     link_args.append('-fopenmp')
 
 if os.name == "nt":

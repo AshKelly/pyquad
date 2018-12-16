@@ -64,6 +64,15 @@ cd pyquad
 python setup.py install
 ```
 
+or
+
+```
+cd pyquad
+python setup.py install --openmp
+```
+
+to compile with parallel capabilities.
+
 ### Requirements
 
 The packacge requires that cython and numpy are already installed. We also
