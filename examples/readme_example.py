@@ -19,3 +19,9 @@ print(time.time() - t0)
 t0 = time.time()
 res = pyquad.quad_grid(test_integrand_func, 0, 1, grid, (1.0, 1.0, 1.0, 1.0))
 print(time.time() - t0)
+
+
+t0 = time.time()
+res = pyquad.quad_grid(test_integrand_func, 0, 1, grid, (1.0, 1.0, 1.0, 1.0),
+                       parallel=True)
+print(time.time() - t0)

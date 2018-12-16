@@ -43,9 +43,9 @@ res = pyquad.quad_grid(test_integrand_func, 0, 1, grid, (1.0, 1.0, 1.0, 1.0))
 ```
 
 which reduces the runtime from 107.8 seconds to 1.7 seconds on my laptop. This
-can also be sped up be replacing `pyquad.quad_grid` with
-`pyquad.parallel_quad_grid` which takes advantage of openMP. My laptop can get
-a 3-4x speed up using the parallel version.
+can also be sped up by passing the kwarg `parallel=True` to `pyquad.quad_grid`
+whichch takes advantage of openMP. My laptop can get a 3x speed up using the
+parallel version.
 
 ## Installing
 

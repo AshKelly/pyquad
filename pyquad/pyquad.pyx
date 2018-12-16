@@ -39,10 +39,10 @@ cdef extern from "quad.c":
     cdef void _quad_grid(int num_args, int num_grid_args,  double a, double b,
                          params args, int num, double epsabs, double epsrel,
                          size_t limit, double * result, double * error)
-    #cdef void _quad_grid_parallel(int num_args,  double a, double b, params args,
-    #                     int num, double * grid1, double * grid2,
-    #                     double epsabs, double epsrel, size_t limit,
-    #                     double * result, double * error)
+    cdef void _quad_grid_parallel(int num_args, int num_grid_args,  double a,
+                         double b, params args, int num, double epsabs,
+                         double epsrel, size_t limit, double * result,
+                         double * error)
 
 
 def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
@@ -103,8 +103,12 @@ def quad_grid(py_integrand, double a, double b, np.float64_t[:, :] grid,
     # Pointer to the jitted integrand
     p.func = f
 
-    _quad_grid(num_args, num_grid_args, a, b, p, num_values, epsabs,
-               epsrel, limit, &result[0], &error[0])
+    if parallel:
+        _quad_grid_parallel(num_args, num_grid_args, a, b, p, num_values, epsabs,
+                            epsrel, limit, &result[0], &error[0])
+    else:
+        _quad_grid(num_args, num_grid_args, a, b, p, num_values, epsabs,
+                   epsrel, limit, &result[0], &error[0])
 
     free(p.args)
     free(p.grid_args)
