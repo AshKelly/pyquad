@@ -16,6 +16,7 @@ typedef double (*integrand_wrapper)(double, void *);
 
 typedef struct{
     double * args;
+    double * * grid_args;
     integrand func;
 } params;
 
@@ -140,13 +141,14 @@ void _quad(int num_args, double a, double b, void * p, double epsabs,
     gsl_integration_workspace_free(w);
 }
 
-void _quad_grid(int num_args, double a, double b, params ps, int num, double * grid1,
-                double * grid2, double epsabs, double epsrel, size_t limit,
+void _quad_grid(int num_args, int num_grid_args, double a, double b, params ps,
+                int num, double epsabs, double epsrel, size_t limit,
                 double * result, double * error){
+
     // Extend the args array and add the grid args
-    double * grid_args = (double *) malloc(sizeof(double) * (num_args + 2));
+    double * grid_args = (double *) malloc(sizeof(double) * (num_args + num_grid_args));
     for(int i=0; i<num_args; i++){
-        grid_args[i + 2] = ps.args[i];
+        grid_args[i + num_grid_args] = ps.args[i];
     }
     ps.args = &grid_args[0];
 
@@ -154,12 +156,13 @@ void _quad_grid(int num_args, double a, double b, params ps, int num, double * g
     gsl_set_error_handler_off();
     gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
     gsl_function gfunc;
-    gfunc.function = select_integrand(num_args + 2);
+    gfunc.function = select_integrand(num_args + num_grid_args);
     gfunc.params = (void *)&ps;
 
     for(int i=0; i<num; i++){
-        ps.args[0] = grid1[i];
-        ps.args[1] = grid2[i];
+        for(int j=0; j<num_grid_args; j++){
+            ps.args[j] = ps.grid_args[j][i];
+        }
         gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, &result[i], &error[i]);
     }
 
@@ -167,6 +170,7 @@ void _quad_grid(int num_args, double a, double b, params ps, int num, double * g
     gsl_integration_workspace_free(w);
 }
 
+/*
 void _quad_grid_parallel(int num_args, double a, double b, params ps, int num,
                          double * grid1, double * grid2, double epsabs,
                          double epsrel, size_t limit, double * result,
@@ -199,3 +203,4 @@ void _quad_grid_parallel(int num_args, double a, double b, params ps, int num,
     gsl_integration_workspace_free(w);
     }
 }
+*/
