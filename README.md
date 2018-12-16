@@ -47,6 +47,8 @@ can also be sped up by passing the kwarg `parallel=True` to `pyquad.quad_grid`
 whichch takes advantage of openMP. My laptop can get a 3x speed up using the
 parallel version.
 
+Further examples can be found [here](https://github.com/AshKelly/pyquad/blob/master/examples/jupyter_example.ipynb)
+
 ## Installing
 
 To get started using the package you need to clone the repository,

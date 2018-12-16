@@ -141,6 +141,7 @@ void _quad(int num_args, double a, double b, void * p, double epsabs,
     gsl_integration_workspace_free(w);
 }
 
+
 void _quad_grid(int num_args, int num_grid_args, double a, double b, params ps,
                 int num, double epsabs, double epsrel, size_t limit,
                 double * result, double * error){
