@@ -175,7 +175,6 @@ void _quad_grid(int num_args, int num_grid_args, double a, double b, params ps,
 void _quad_grid_parallel(int num_args, int num_grid_args, double a, double b,
                          params ps, int num, double epsabs, double epsrel,
                          size_t limit, double * result, double * error){
-    omp_set_num_threads(8);
     #pragma omp parallel firstprivate(ps)
     {
     // Extend the args array and add the grid args
