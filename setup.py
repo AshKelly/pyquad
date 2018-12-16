@@ -1,9 +1,21 @@
 from setuptools import setup
 from setuptools.extension import Extension
+from setupext import check_for_openmp
 import os
-import numpy as np
 
-link_args = ['-fopenmp', '-lgsl', '-lblas']
+try:
+    import cython
+    import numpy as np
+except ImportError:
+    raise ImportError(
+"""Could not import cython or numpy. Building pyquad from source requires
+cython and numpy to be installed. Please install these packages using
+the appropriate package manager for your python environment.""")
+
+link_args = ['-lgsl', '-lblas']
+if check_for_openmp() is True:
+    link_args.append('-fopenmp')
+
 if os.name == "nt":
     std_libs = []
 else:
@@ -19,7 +31,7 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
-    install_requires=['cython', 'scipy', 'pytest', 'numba'],
+    install_requires=['scipy', 'numba', 'pytest'],
     ext_modules=[Extension("pyquad",
                            ["pyquad/pyquad.pyx"],
                            extra_compile_args=link_args,
