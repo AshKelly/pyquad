@@ -3,8 +3,10 @@ import numpy as np
 import scipy.integrate
 import pyquad
 
+
 def test_integrand_func(x, alpha, beta, i, j, k, l):
     return x * alpha * beta + i * j * k
+
 
 grid = np.random.random((10000000, 2))
 
@@ -22,6 +24,7 @@ print(time.time() - t0)
 
 
 t0 = time.time()
-res = pyquad.quad_grid(test_integrand_func, 0, 1, grid, (1.0, 1.0, 1.0, 1.0),
-                       parallel=True)
+res = pyquad.quad_grid(
+    test_integrand_func, 0, 1, grid, (1.0, 1.0, 1.0, 1.0), parallel=True
+)
 print(time.time() - t0)

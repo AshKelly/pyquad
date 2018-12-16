@@ -15,8 +15,10 @@ using `scipy.integrate.quad`,
 import numpy as np
 import scipy.integrate
 
+
 def test_integrand_func(x, alpha, beta, i, j, k, l):
     return x * alpha * beta + i * j * k
+
 
 grid = np.random.random((10000000, 2))
 
@@ -32,6 +34,7 @@ this can be replaced with,
 ```python
 import numpy as np
 import pyquad
+
 
 def test_integrand_func(x, alpha, beta, i, j, k, l):
     return x * alpha * beta + i * j * k
