@@ -12,7 +12,7 @@ except ImportError:
 cython and numpy to be installed. Please install these packages using
 the appropriate package manager for your python environment.""")
 
-link_args = ['-lgsl', '-lblas']
+link_args = ['-lgsl', '-lgslcblas']
 
 if '--openmp' in sys.argv:
     sys.argv.remove('--openmp')

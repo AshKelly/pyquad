@@ -84,8 +84,10 @@ to link against. Using the Aptitude Package Manager these can be installed with,
 
 ```
 sudo apt-get install libgsl-dev
-sudo apt-get install libblas-dev
 ```
+
+or on a cluster you just need to load the GNU compilers and a GNU Scientific
+Library modules (gsl)
 
 ## Running the tests
 
