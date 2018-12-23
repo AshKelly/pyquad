@@ -1,4 +1,3 @@
-
 cimport cython
 cimport numpy as np
 
@@ -8,7 +7,6 @@ import numpy as np
 
 from numba import cfunc
 from libc.stdlib cimport malloc, free
-
 
 cfunc_sigs = {}
 cfunc_sigs[1] = "float64(float64)"
