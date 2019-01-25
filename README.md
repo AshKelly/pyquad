@@ -54,7 +54,13 @@ Further examples can be found [here](https://github.com/AshKelly/pyquad/blob/mas
 
 ## Installing
 
-To get started using the package you need to clone the repository,
+To get started using the package you can use pip,
+
+```
+pip install pyquad --user
+```
+
+or you can clone the repository,
 
 ```
 git clone https://github.com/AshKelly/pyquad.git
