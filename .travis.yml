@@ -32,5 +32,7 @@ install:
     $PIP install -e .
 
 script:
+  - export CIBW_BUILD="cp36-*"
+  - export CIBW_BEFORE_BUILD="pip install numpy cython"
   - $PIP install cibuildwheel
   - cibuildwheel --output-dir wheelhouse
