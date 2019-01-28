@@ -2,9 +2,7 @@ language: python
 sudo: required
 dist: centos
 cache:
-  pip: true
-  directories:
-    - $HOME/.ccache
+  pip: false
 
 matrix:
   include:
@@ -15,12 +13,10 @@ matrix:
       env:
         - PIP=pip
         - CIBW_BUILD="cp36-*"
-        - CIBW_MANYLINUX1_X86_64_IMAGE="quay.io/pypa/manylinux1_x86_64:01a75168a06f"
 
 install:
   - |
     # setup environment
-    ccache -s
     # Upgrade pip and setuptools and wheel to get clean install
     #$PIP install --upgrade pip
     #$PIP install --upgrade wheel
