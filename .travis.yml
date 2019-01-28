@@ -1,6 +1,6 @@
 language: python
 sudo: required
-dist: xenial
+dist: centos
 cache:
   pip: true
   directories:
@@ -17,7 +17,11 @@ matrix:
       services:
         - docker
       python: 3.6
-      env: PIP=pip
+      env:
+        - PIP=pip
+        - CIBW_BUILD="cp36-*"
+        - CIBW_BEFORE_BUILD="pip install numpy cython"
+        - CIBW_MANYLINUX1_X86_64_IMAGE="quay.io/pypa/manylinux1_x86_64:01a75168a06f"
 
 install:
   - |
