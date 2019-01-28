@@ -6,11 +6,6 @@ cache:
   directories:
     - $HOME/.ccache
 
-addons:
-  apt:
-    packages:
-      - libgsl-dev
-
 matrix:
   include:
     - sudo: required
