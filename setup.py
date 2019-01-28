@@ -18,7 +18,7 @@ src_files = ["pyquad/pyquad.pyx", "pyquad/integration/error.c",
 
 setup(
     name='pyquad',
-    version='0.0.2.5',
+    version='0.0.3.0',
     author="Ashley J Kelly",
     author_email="a.j.kelly@durham.ac.uk",
     description="A python wrapper for the GSL integration routines",
@@ -26,7 +26,7 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
-    #install_requires=['cython', 'numpy', 'wheel', 'scipy', 'numba', 'pytest'],
+    install_requires=['cython', 'numpy', 'numba'],
     ext_modules=[Extension("pyquad",
                            src_files,
                            extra_compile_args=link_args,
