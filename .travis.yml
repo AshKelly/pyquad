@@ -1,6 +1,6 @@
 language: python
 sudo: required
-dist: centos
+dist: xenial
 cache:
   pip: true
   directories:
