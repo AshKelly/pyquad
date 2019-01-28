@@ -1,14 +1,21 @@
 language: python
-dist: centos
 sudo: required
+dist: centos
 cache:
   pip: true
   directories:
-    - $HOME/.ccache  # https://github.com/travis-ci/travis-ci/issues/5853
+    - $HOME/.ccache
 
-env:
-  global:
-    PIP=pip
+matrix:
+  include:
+    - sudo: required
+      services:
+        - docker
+      python: 3.6
+      env:
+        - PIP=pip
+        - CIBW_BUILD="cp36-*"
+        - CIBW_BEFORE_BUILD="pip install numpy cython"
 
 install:
   - |
@@ -22,8 +29,8 @@ install:
     $PIP install cython
     $PIP install -e .
 
-jobs:
-  include:
-    - stage: tests
-      python: 3.6
-      script: pytest tests/
+script:
+  - export CIBW_BUILD="cp36-*"
+  - export CIBW_BEFORE_BUILD="pip install numpy cython"
+  - $PIP install cibuildwheel
+  - cibuildwheel --output-dir wheelhouse
