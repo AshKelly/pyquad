@@ -3,8 +3,8 @@ from setuptools.extension import Extension
 import sys
 import numpy as np
 
-#link_args = ["-std=c99"]
-link_args = []
+link_args = ["-std=c99"]
+#link_args = []
 
 if '--openmp' in sys.argv:
     sys.argv.remove('--openmp')
