@@ -11,7 +11,7 @@ env:
   global:
     - PIP=pip3
     - CIBW_BUILD="cp35-*"
-    - CIBW_BEFORE_BUILD="pip install cython numpy scipy numba --only-binary all"
+    - CIBW_BEFORE_BUILD="$PIP install cython numpy scipy numba --only-binary all"
     - CIBW_BUILD_VERBOSITY="3"
 
 script:
