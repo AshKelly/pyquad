@@ -30,6 +30,11 @@ install:
     $PIP install numpy
     $PIP install cython
     $PIP install -e .
+
+script:
+  - $PIP install cibuildwheel==0.10.0
+  - cibuildwheel --output-dir wheelhouse
+
 jobs:
   include:
     - stage: tests
