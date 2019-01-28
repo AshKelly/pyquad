@@ -11,11 +11,17 @@ except ImportError:
 cython and numpy to be installed. Please install these packages using
 the appropriate package manager for your python environment.""")
 
-link_args = ['-lgsl', '-lgslcblas']
+link_args = []
 
 if '--openmp' in sys.argv:
     sys.argv.remove('--openmp')
     link_args.append('-fopenmp')
+
+src_files = ["pyquad/pyquad.pyx", "pyquad/integration/error.c",
+             "pyquad/integration/qk.c", "pyquad/integration/qk21.c",
+             "pyquad/integration/qk15.c", "pyquad/integration/qags.c",
+             "pyquad/integration/workspace.c"
+             ]
 
 setup(
     name='pyquad',
@@ -29,7 +35,7 @@ setup(
     ],
     install_requires=['cython', 'numpy', 'wheel', 'scipy', 'numba', 'pytest'],
     ext_modules=[Extension("pyquad",
-                           ["pyquad/pyquad.pyx"],
+                           src_files,
                            extra_compile_args=link_args,
                            extra_link_args=link_args,
                            include_dirs=[np.get_include()],
