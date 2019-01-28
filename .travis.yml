@@ -1,34 +1,19 @@
 language: python
+os: linux
+sudo: required
 
-matrix:
-  include:
-    - sudo: required
-      services:
-        - docker
-      python: 3.5
-      env:
-        - PIP=pip
-        - CIBW_BUILD="cp35-*"
-        - CIBW_BEFORE_BUILD="pip install numpy"
-        - CIBW_BUILD_VERBOSITY="3"
-        - CC=gcc-4.2
+services:
+  docker
 
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y gcc-4.2
+python:
+  3.5
 
-install:
-  - |
-    # setup environment
-    # Upgrade pip and setuptools and wheel to get clean install
-    #$PIP install --upgrade pip
-    #$PIP install --upgrade wheel
-    #$PIP install --upgrade setuptools
-    gcc -v
-    $PIP install numpy
-    $PIP install -e .
-
+env:
+  - PIP=pip
+  - CIBW_BUILD="cp35-*"
+  - CIBW_BEFORE_BUILD="{pip} install cython numpy scipy numba --only-binary all"
+  - CIBW_BUILD_VERBOSITY="3"
 
 script:
-  - $PIP install cibuildwheel
+  - $PIP install cibuildwheel==0.9.4
   - cibuildwheel --output-dir wheelhouse

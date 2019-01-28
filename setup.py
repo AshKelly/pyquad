@@ -3,7 +3,8 @@ from setuptools.extension import Extension
 import sys
 import numpy as np
 
-link_args = ["-std=c99"]
+#link_args = ["-std=c99"]
+link_args = []
 
 if '--openmp' in sys.argv:
     sys.argv.remove('--openmp')
@@ -25,7 +26,7 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
-    install_requires=['cython', 'numpy', 'wheel', 'scipy', 'numba', 'pytest'],
+    #install_requires=['cython', 'numpy', 'wheel', 'scipy', 'numba', 'pytest'],
     ext_modules=[Extension("pyquad",
                            src_files,
                            extra_compile_args=link_args,
