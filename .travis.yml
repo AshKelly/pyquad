@@ -19,7 +19,7 @@ install:
     #$PIP install --upgrade pip
     #$PIP install --upgrade wheel
     #$PIP install --upgrade setuptools
-    $gcc -v
+    gcc -v
     $PIP install numpy
     $PIP install -e .
 
