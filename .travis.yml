@@ -13,6 +13,7 @@ matrix:
       env:
         - PIP=pip
         - CIBW_BUILD="cp36-*"
+        - CIBW_BEFORE_BUILD="pip install numpy"
 
 install:
   - |
@@ -21,7 +22,7 @@ install:
     #$PIP install --upgrade pip
     #$PIP install --upgrade wheel
     #$PIP install --upgrade setuptools
-    #$PIP install numpy
+    $PIP install numpy
     #$PIP install cython
     $PIP install -e .
 
