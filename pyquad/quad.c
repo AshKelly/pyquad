@@ -4,9 +4,7 @@
 #include <math.h>
 #include <time.h>
 
-#include <gsl/gsl_integration.h>
-#include <gsl/gsl_errno.h>
-
+#include "integration/gsl_integration.h"
 #include <omp.h>
 
 
@@ -132,7 +130,6 @@ void _quad(int num_args, double a, double b, void * p, double epsabs,
            double epsrel, size_t limit, double * result, double * error){
     gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
 
-    gsl_set_error_handler_off();
     gsl_function gfunc;
     gfunc.function = select_integrand(num_args);
     gfunc.params = p;
@@ -154,7 +151,6 @@ void _quad_grid(int num_args, int num_grid_args, double a, double b, params ps,
     ps.args = &grid_args[0];
 
     // Set up the integration wroskapce
-    gsl_set_error_handler_off();
     gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
     gsl_function gfunc;
     gfunc.function = select_integrand(num_args + num_grid_args);
@@ -185,7 +181,6 @@ void _quad_grid_parallel(int num_args, int num_grid_args, double a, double b,
     ps.args = &grid_args[0];
 
     // Set up the integration wroskapce
-    gsl_set_error_handler_off();
     gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
     gsl_function gfunc;
     gfunc.function = select_integrand(num_args + num_grid_args);
