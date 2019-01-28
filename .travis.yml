@@ -25,8 +25,8 @@ install:
     #$PIP install --upgrade pip
     #$PIP install --upgrade wheel
     #$PIP install --upgrade setuptools
-    $PIP install numpy
-    $PIP install cython
+    #$PIP install numpy
+    #$PIP install cython
     $PIP install -e .
 
 script:

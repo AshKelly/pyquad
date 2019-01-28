@@ -2,15 +2,6 @@ from setuptools import setup
 from setuptools.extension import Extension
 import sys
 
-try:
-    import cython
-    import numpy as np
-except ImportError:
-    raise ImportError(
-"""Could not import cython or numpy. Building pyquad from source requires
-cython and numpy to be installed. Please install these packages using
-the appropriate package manager for your python environment.""")
-
 link_args = []
 
 if '--openmp' in sys.argv:
