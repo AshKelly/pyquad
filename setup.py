@@ -1,6 +1,7 @@
 from setuptools import setup
 from setuptools.extension import Extension
 import sys
+import numpy as np
 
 link_args = []
 
