@@ -1,42 +1,19 @@
 language: python
+os: linux
 sudo: required
-dist: centos
-cache:
-  pip: true
-  directories:
-    - $HOME/.ccache
+services: docker
+python: 3.5
 
-addons:
-  apt:
-    packages:
-      - libgsl-dev
-
-matrix:
-  include:
-    - sudo: required
-      services:
-        - docker
-      python: 3.6
-      env:
-        - PIP=pip
-        - CIBW_BUILD="cp36-*"
-        - CIBW_BEFORE_BUILD="pip install numpy cython"
-        - CIBW_MANYLINUX1_X86_64_IMAGE="quay.io/pypa/manylinux1_x86_64:01a75168a06f"
-
-install:
-  - |
-    # setup environment
-    ccache -s
-    # Upgrade pip and setuptools and wheel to get clean install
-    $PIP install --upgrade pip
-    $PIP install --upgrade wheel
-    $PIP install --upgrade setuptools
-    $PIP install numpy
-    $PIP install cython
-    $PIP install -e .
+env:
+  global:
+  - PIP=pip
+  - CIBW_SKIP="cp27-*"
+  - CIBW_BEFORE_BUILD="$PIP install cython numpy scipy numba --only-binary all"
+  - CIBW_BUILD_VERBOSITY="3"
+  - TWINE_USERNAME=ashjkelly
 
 script:
-  - export CIBW_BUILD="cp36-*"
-  - export CIBW_BEFORE_BUILD="pip install numpy cython"
-  - $PIP install cibuildwheel
+  - "$PIP install cibuildwheel"
   - cibuildwheel --output-dir wheelhouse
+  - pip install twine
+  - python -m twine upload wheelhouse/*.whl

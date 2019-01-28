@@ -1,21 +1,20 @@
 from setuptools import setup
 from setuptools.extension import Extension
 import sys
+import numpy as np
 
-try:
-    import cython
-    import numpy as np
-except ImportError:
-    raise ImportError(
-"""Could not import cython or numpy. Building pyquad from source requires
-cython and numpy to be installed. Please install these packages using
-the appropriate package manager for your python environment.""")
-
-link_args = ['-lgsl', '-lgslcblas']
+link_args = ["-std=c99"]
+#link_args = []
 
 if '--openmp' in sys.argv:
     sys.argv.remove('--openmp')
     link_args.append('-fopenmp')
+
+src_files = ["pyquad/pyquad.pyx", "pyquad/integration/error.c",
+             "pyquad/integration/qk.c", "pyquad/integration/qk21.c",
+             "pyquad/integration/qk15.c", "pyquad/integration/qags.c",
+             "pyquad/integration/workspace.c"
+             ]
 
 setup(
     name='pyquad',
@@ -27,9 +26,9 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
-    install_requires=['cython', 'numpy', 'wheel', 'scipy', 'numba', 'pytest'],
+    #install_requires=['cython', 'numpy', 'wheel', 'scipy', 'numba', 'pytest'],
     ext_modules=[Extension("pyquad",
-                           ["pyquad/pyquad.pyx"],
+                           src_files,
                            extra_compile_args=link_args,
                            extra_link_args=link_args,
                            include_dirs=[np.get_include()],
