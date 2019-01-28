@@ -1,19 +1,19 @@
 language: python
 os: linux
 sudo: required
-
-services:
-  docker
-
+services: docker
 python: 3.5
 
 env:
   global:
-    - PIP=pip
-    - CIBW_BUILD="cp35-*"
-    - CIBW_BEFORE_BUILD="$PIP install cython numpy scipy numba --only-binary all"
-    - CIBW_BUILD_VERBOSITY="3"
+  - PIP=pip
+  - CIBW_BUILD="cp35-*"
+  - CIBW_BEFORE_BUILD="$PIP install cython numpy scipy numba --only-binary all"
+  - CIBW_BUILD_VERBOSITY="3"
+  - TWINE_USERNAME=ashjkelly
 
 script:
-  - $PIP install cibuildwheel
+  - "$PIP install cibuildwheel"
   - cibuildwheel --output-dir wheelhouse
+  - pip install twine
+  - python -m twine upload wheelhouse/*.whl
