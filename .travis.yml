@@ -4,40 +4,34 @@ sudo: required
 cache:
   pip: true
   directories:
-  - "$HOME/.ccache"
+    - $HOME/.ccache  # https://github.com/travis-ci/travis-ci/issues/5853
+
 addons:
   apt:
     packages:
-    - libgsl-dev
+      - libgsl-dev
+
 env:
-  global: PIP=pip
+  global:
+    PIP=pip
+
+env:
+  global:
+    PIP=pip
+
 install:
-  # setup environment
-  ccache -s
-  # Upgrade pip and setuptools and wheel to get clean install
-  $PIP install --upgrade pip
-  $PIP install --upgrade wheel
-  $PIP install --upgrade setuptools
-  $PIP install numpy
-  $PIP install cython
-  $PIP install cibuildwheel
-  $PIP install -e .
-
-deploy:
-  provider: pypi
-  user: AshJKelly
-  password:
-    secure: iF1+rfFeetPz78hD+/le+DY5FmS7bw16p4MN4vvr3sszECw6WP3LeLJW0A6QnbLFXWT/roJ3Url4fjHP00hvL3eAUUSM6fmuGOE+Pq3XH/MeHXB45A+zGqC90q7IxLO/NZK5qIhoam4wY6bRmcBo5fXEmv7m42/GFhZI0b3T/KLEqcwivWQhqcOe6w05TwrBhBmrd02UO1tzOcwgyariQjjJfYjTEsHZJ9YXewOx+91UwKH3WWdruCJ/PXTvEwzYCA6FRN4S5bbLfmtcTV6XlZMBnp53By3Iyj7/rA1GeooOsy2nShgszx7AX46OwsjIigXQIfrg8GFTUheS/71VoXRXGaWEWyBydZ63VlFIEVPN5pWoAM1vHFsd5ivfiXtQBENiqbu4p/XoY1A5ruu78ZRgJudWITUVJQPL2A784VldGI3Rp9RZRZ1dD9VmlCIzbINjMSsmuYdZkzGu26lCSsGdacsaMzh541m5ZNXMX7rGRV5jq/IQlT5CQXC7O4Lzx101B7Ool3CT5iNtocb6mQsaGIEEZfcPEQqeUf0WLDfA3CrHV4eFecY/+wLIDF2/sLptM2wyjNkTFewTLzHOkoMsjHXUya4t0IzMV/957VqTnavy8h0fAvYwX/irjT/uBLhT2yGS/z2+Zkhj/y59hkArRNgLWSdRNb3IYVkivck=
-
-script:
-  - $PIP install cibuildwheel==0.10.0
-  - cibuildwheel --output-dir wheelhouse
-
+  - |
+    # setup environment
+    ccache -s
+    # Upgrade pip and setuptools and wheel to get clean install
+    $PIP install --upgrade pip
+    $PIP install --upgrade wheel
+    $PIP install --upgrade setuptools
+    $PIP install numpy
+    $PIP install cython
+    $PIP install -e .
 jobs:
   include:
-  - stage: tests
-    python: 3.6
-    script: pytest tests/
-  - stage: tests
-    python: 3.7
-    script: pytest tests/
+    - stage: tests
+      python: 3.6
+      script: pytest tests/
