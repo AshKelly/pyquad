@@ -1,14 +1,22 @@
 language: python
+sudo: required
+cache:
+  pip: true
+  directories:
+    - $HOME/.ccache
+
+addons:
+  apt:
+    packages:
+      - libgsl-dev
 
 matrix:
   include:
     - sudo: required
       services:
         - docker
+      python: 3.6
       env: PIP=pip
-    - os: osx
-      language: generic
-      env: PIP=pip2
 
 install:
   - |
