@@ -14,6 +14,7 @@ matrix:
         - PIP=pip
         - CIBW_BUILD="cp35-*"
         - CIBW_BEFORE_BUILD="pip install numpy"
+        - CIBW_TEST_COMMAND="auditwheel show /tmp/built_wheel/pyquad-0.0.2.5-cp35-cp35m-linux_x86_64.whl"
 
 install:
   - |
