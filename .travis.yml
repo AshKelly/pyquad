@@ -1,8 +1,4 @@
 language: python
-sudo: required
-dist: centos
-cache:
-  pip: false
 
 matrix:
   include:
@@ -24,7 +20,6 @@ install:
     #$PIP install --upgrade wheel
     #$PIP install --upgrade setuptools
     $PIP install numpy
-    #$PIP install cython
     $PIP install -e .
 
 
