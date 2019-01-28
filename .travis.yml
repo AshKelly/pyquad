@@ -10,6 +10,11 @@ env:
   global:
     PIP=pip
 
+addons:
+  apt:
+    packages:
+      - libgsl-dev
+
 install:
   - |
     # setup environment
