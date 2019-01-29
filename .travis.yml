@@ -16,7 +16,7 @@ install:
 jobs:
   include:
     - stage: tests
-      name: "Python: 3.4 Unit Tests"
+      name: "Python: 3.4 Tests"
       python: 3.5
       script: pytest tests/
 
