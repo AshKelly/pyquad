@@ -9,13 +9,14 @@ matrix:
       python: 3.5
     - os: osx
       language: generic
-      env: PIP=pip2
+      env: PIP=pip
 
 env:
   global:
   - CIBW_SKIP="cp27-* cp34-*"
   - CIBW_BEFORE_BUILD="pip install cython numpy numba --only-binary all"
   - CIBW_BUILD_VERBOSITY="3"
+  - CIBW_TEST_COMMAND="pip install pytest; pytest tests/"
   - TWINE_USERNAME=ashjkelly
 
 script:
