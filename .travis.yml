@@ -33,6 +33,12 @@ jobs:
       script: pytest tests/
 
     - stage: tests
+      name: "Python: 3.7 Parallel tests"
+      python: 3.7
+      env: OMP_NUM_THREADS=4
+      script: rm -rf build; $PIP install -e . --install-option="--openmp"; pytest tests/
+
+    - stage: tests
       name: "MacOS: Tests"
       os: osx
       language: generic
