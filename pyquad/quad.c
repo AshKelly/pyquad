@@ -5,8 +5,10 @@
 #include <time.h>
 
 #include "integration/gsl_integration.h"
-#include <omp.h>
 
+#ifdef OMP_ON
+#include <omp.h>
+#endif
 
 typedef double (*integrand)(double, ...);
 typedef double (*integrand_wrapper)(double, void *);
