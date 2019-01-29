@@ -54,7 +54,12 @@ Further examples can be found [here](https://github.com/AshKelly/pyquad/blob/mas
 
 ## Installing
 
-To get started using the package you can use pip,
+To get started using the package you can use pip
+to download wheels for linux or osx,
+
+(NOTE: For parallelisation it is important to clone
+from github and compile as instructed below.)
+
 
 ```
 pip install pyquad --user
@@ -84,16 +89,8 @@ to compile with parallel capabilities.
 
 ### Requirements
 
-The packacge requires that cython and numpy are already installed. We also
-require a C compiler (GCC) and the GNU Scientific Library (GSL) to be available
-to link against. Using the Aptitude Package Manager these can be installed with,
-
-```
-sudo apt-get install libgsl-dev
-```
-
-or on a cluster you just need to load the GNU compilers and a GNU Scientific
-Library modules (gsl)
+The package requires that numpy is already installed and we require a C
+compiler to build from source.
 
 ## Running the tests
 
@@ -104,8 +101,8 @@ testing by comparing to `scipy.integrate.quad`. These can be run with,
 pytest tests
 ```
 
-inside the pyquad folder. You will need to install pytest for this (`pip
-install pytest --user`)
+inside the pyquad folder. You will need to install pytest and scipy for this
+(`pip install pytest scipy --user`)
 
 ## History
 
@@ -123,4 +120,5 @@ get in touch via email or a pull request.
 
 ## License
 
-This project is licensed under the LGPL v3.0 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the LGPL v3.0 License - see the
+[LICENSE.md](LICENSE.md) file for details
