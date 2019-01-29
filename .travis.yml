@@ -7,8 +7,8 @@ matrix:
         - docker
       env: PIP=pip
     - os: osx
-        language: generic
-        env: PIP=pip2
+      language: generic
+      env: PIP=pip2
 
 env:
   global:
