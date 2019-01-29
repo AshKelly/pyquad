@@ -2,8 +2,6 @@ from setuptools import setup
 from setuptools.extension import Extension
 import sys
 
-from pyquad import __version__
-
 try:
     import numpy as np
 except ImportError:
@@ -24,7 +22,7 @@ src_files = ["pyquad/pyquad.pyx", "pyquad/integration/error.c",
 
 setup(
     name='pyquad',
-    version=__version__,
+    version='0.0.3.5',
     author="Ashley J Kelly",
     author_email="a.j.kelly@durham.ac.uk",
     description="A python wrapper for the GSL integration routines",
