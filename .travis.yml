@@ -12,6 +12,7 @@ install:
   - |
     $PIP install --upgrade pip
     $PIP install --upgrade setuptools
+    $PIP install numpy cython
     $PIP install -e .
     $PIP install scipy pytest
 
