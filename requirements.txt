@@ -1,0 +1,6 @@
+Cython==0.29.3
+llvmlite==0.27.0
+numba==0.42.0
+numpy==1.16.0
+pkg-resources==0.0.0
+pyquad==0.0.3.5

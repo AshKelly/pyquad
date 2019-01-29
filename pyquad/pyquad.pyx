@@ -67,7 +67,8 @@ def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
 
 
 def quad_grid(py_integrand, double a, double b, np.float64_t[:, :] grid,
-              args=(), epsabs=1e-7, epsrel=1e-7, limit=200, parallel=False):
+              args=(), epsabs=1e-7, epsrel=1e-7, limit=200, parallel=False,
+              nopython=True, cache=True):
     # Make sure the array is fortran contiguous
     grid = np.asfortranarray(grid)
     if not isinstance(args, tuple):
@@ -78,8 +79,8 @@ def quad_grid(py_integrand, double a, double b, np.float64_t[:, :] grid,
     cdef int num_grid_args = grid.shape[1]
 
     # jit the integrand
-    numba_integrand = cfunc(cfunc_sigs[num_args+num_grid_args+1], nopython=True,
-                            cache=True)(py_integrand)
+    numba_integrand = cfunc(cfunc_sigs[num_args+num_grid_args+1],
+                            nopython=nopython, cache=cache)(py_integrand)
     cdef integrand f = <integrand><size_t>numba_integrand.address
 
     # prepare arrays to store the integration results
@@ -101,7 +102,7 @@ def quad_grid(py_integrand, double a, double b, np.float64_t[:, :] grid,
     # Pointer to the jitted integrand
     p.func = f
 
-    if parallel:
+    if parallel and nopython:
         _quad_grid_parallel(num_args, num_grid_args, a, b, p, num_values, epsabs,
                             epsrel, limit, &result[0], &error[0])
     else:
