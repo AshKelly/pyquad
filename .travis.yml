@@ -3,9 +3,9 @@ language: python
 matrix:
   include:
     - sudo: required
-        services:
-          - docker
-        env: PIP=pip
+      services:
+        - docker
+      env: PIP=pip
     - os: osx
         language: generic
         env: PIP=pip2
