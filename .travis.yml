@@ -36,7 +36,7 @@ jobs:
       name: "Python: 3.7 Parallel tests"
       python: 3.7
       env: OMP_NUM_THREADS=4
-      script: rm -rf build; $PIP install -e . --install-option="--openmp"; pytest tests/
+      script: rm -rf build; $PIP install -e . --install-option="--openmp" -v; pytest tests/
 
     - stage: tests
       name: "MacOS: Tests"
