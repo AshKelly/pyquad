@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/AshKelly/pyquad.svg?branch=master)](https://travis-ci.com/AshKelly/pyquad)
+
 # pyquad
 
 A drop-in replacment for `scipy.integrate.quad` which is much faster for repeat
