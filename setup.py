@@ -9,11 +9,6 @@ except ImportError:
 
 link_args = ["-std=c99"]
 
-if '--openmp' in sys.argv:
-    sys.argv.remove('--openmp')
-    link_args.append('-fopenmp')
-    link_args.append('-D OMP_ON=1')
-
 src_files = ["pyquad/pyquad.pyx", "pyquad/integration/error.c",
              "pyquad/integration/qk.c", "pyquad/integration/qk21.c",
              "pyquad/integration/qk15.c", "pyquad/integration/qags.c",
@@ -22,7 +17,7 @@ src_files = ["pyquad/pyquad.pyx", "pyquad/integration/error.c",
 
 setup(
     name='pyquad',
-    version='0.0.3.5',
+    version='0.0.4.0',
     author="Ashley J Kelly",
     author_email="a.j.kelly@durham.ac.uk",
     description="A python wrapper for the GSL integration routines",
@@ -30,7 +25,7 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
-    install_requires=['cython', 'numpy', 'numba'],
+    install_requires=['cython==0.29.5', 'numpy==1.16.0', 'numba==0.42.1'],
     extras_require={
         'test': ['pytest', 'scipy'],
     },
