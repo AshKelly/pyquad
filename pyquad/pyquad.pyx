@@ -47,8 +47,15 @@ def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
          limit=200):
     num_args = len(args)
 
-    # Jit the integrand
-    numba_integrand = cfunc(cfunc_sigs[num_args+1], nopython=True, cache=True)(py_integrand)
+    # Attempt to jit the integrand
+    try:
+        numba_integrand = cfunc(cfunc_sigs[num_args+1], nopython=True,
+                                cache=True)(py_integrand)
+    except:
+        msg = ("Failed to jit the integrand. Your integrand may use functions"+
+               "which are unknown to numba and so nopython should be disabled!")
+        raise NotImplementedError(msg)
+
     cdef integrand f = <integrand><size_t>numba_integrand.address
 
     cdef double result = 0.0
@@ -86,9 +93,15 @@ def quad_grid(py_integrand, double a, double b,
     # Flattened grid
     cdef np.float64_t[::1] flat_grid = grid.flatten()
 
-    # jit the integrand
-    numba_integrand = cfunc(cfunc_sigs[num_args+num_grid_args+1],
-                            nopython=nopython, cache=cache)(py_integrand)
+    # Attempt to jit the integrand
+    try:
+        numba_integrand = cfunc(cfunc_sigs[num_args+num_grid_args+1],
+                                nopython=nopython, cache=cache)(py_integrand)
+    except:
+        msg = ("Failed to jit the integrand. Your integrand may use functions"+
+               "which are unknown to numba and so nopython should be disabled!")
+        raise NotImplementedError(msg)
+
     cdef integrand f = <integrand><size_t>numba_integrand.address
 
     # Prepare arrays to store the integration results
@@ -102,7 +115,7 @@ def quad_grid(py_integrand, double a, double b,
         p.args[i] = args[i]
     p.func = f
 
-    if parallel:
+    if parallel and nopython:
         with nogil:
             _quad_grid_parallel_wrapper(num_args, num_grid_args, a, b, p,
                     num_values, epsabs, epsrel, limit, &flat_grid[0],
