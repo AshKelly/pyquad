@@ -40,7 +40,7 @@ cdef extern from "quad.c":
     cdef void _quad_grid_parallel_wrapper(int num_args, int num_grid_args,
                     double a, double b, params args, int num, double epsabs,
                     double epsrel, size_t limit, double *, double * result,
-                    double * error) nogil
+                    double * error, int num_threads, int pin_threads) nogil
 
 
 def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
@@ -72,7 +72,8 @@ def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
 def quad_grid(py_integrand, double a, double b,
               np.ndarray[np.float64_t, ndim=2] grid,
               args=(), double epsabs=1e-7, double epsrel=1e-7, int limit=250,
-              parallel=True, nopython=True, cache=True):
+              parallel=True, nopython=True, cache=True, int num_threads=8,
+              int pin_threads=0):
 
     # Ensure we have a tuple for the arguments
     if not isinstance(args, tuple):
@@ -105,7 +106,7 @@ def quad_grid(py_integrand, double a, double b,
         with nogil:
             _quad_grid_parallel_wrapper(num_args, num_grid_args, a, b, p,
                     num_values, epsabs, epsrel, limit, &flat_grid[0],
-                    &result[0], &error[0])
+                    &result[0], &error[0], num_threads, pin_threads)
     else:
         _quad_grid(num_args, num_grid_args, a, b, p, num_values, epsabs, epsrel,
                    limit, &flat_grid[0], &result[0], &error[0])

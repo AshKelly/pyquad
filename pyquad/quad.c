@@ -88,9 +88,9 @@ void * _quad_grid_parallel(void * args){
 
 void _quad_grid_parallel_wrapper(int num_args, int num_grid_args, double a,
     double b, params ps, int num, double epsabs, double epsrel, size_t limit,
-    double * grid, double * result, double * error){
+    double * grid, double * result, double * error, int num_threads,
+    int pin_threads){
 
-    int num_threads = 8;
     int num_per_thread = num / num_threads;
     pthread_args pargs[num_threads];
     pthread_t thread[num_threads];
@@ -120,12 +120,17 @@ void _quad_grid_parallel_wrapper(int num_args, int num_grid_args, double a,
         pargs[i].upper = num_per_thread * (i + 1);
 
         // Just ensure there are no uncalculated integrals
-        if(i == (num_threads - 1))
+        if(i == (num_threads - 1)){
             pargs[i].upper = num;
+        }
 
-        CPU_ZERO(&cpus);
-        CPU_SET(i, &cpus);
-        pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &cpus);
+        // Pin each thread to an individual core
+        if (pin_threads == 1){
+            CPU_ZERO(&cpus);
+            CPU_SET(i, &cpus);
+            pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &cpus);
+        }
+
         pthread_create(&thread[i], &attr, _quad_grid_parallel, (void *) &pargs[i]);
     }
 
