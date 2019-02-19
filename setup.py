@@ -25,7 +25,7 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
-    install_requires=['cython=>0.28', 'numpy=>1.16.0', 'numba=>0.40'],
+    install_requires=['cython>=0.28', 'numpy>=1.16.0', 'numba>=0.40'],
     extras_require={
         'test': ['pytest', 'scipy'],
     },
