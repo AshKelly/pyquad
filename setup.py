@@ -9,6 +9,10 @@ except ImportError:
 
 link_args = ["-std=c99"]
 
+from sys import platform
+if platform == "linux" or platform == "linux2":
+    link_args.append("-D LINUX_MACH=1")
+
 src_files = ["pyquad/pyquad.pyx", "pyquad/integration/error.c",
              "pyquad/integration/qk.c", "pyquad/integration/qk21.c",
              "pyquad/integration/qk15.c", "pyquad/integration/qags.c",

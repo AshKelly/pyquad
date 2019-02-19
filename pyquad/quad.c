@@ -96,8 +96,11 @@ void _quad_grid_parallel_wrapper(int num_args, int num_grid_args, double a,
     pthread_t thread[num_threads];
 
     pthread_attr_t attr;
-    cpu_set_t cpus;
     pthread_attr_init(&attr);
+
+    #ifdef LINUX_MACH
+    cpu_set_t cpus;
+    #endif
 
     //printf("num_per_thread: %i (%i, %i) \n", num_per_thread,
     //       num, num_threads);
@@ -125,11 +128,13 @@ void _quad_grid_parallel_wrapper(int num_args, int num_grid_args, double a,
         }
 
         // Pin each thread to an individual core
+        #ifdef LINUX_MACH
         if (pin_threads == 1){
             CPU_ZERO(&cpus);
             CPU_SET(i, &cpus);
             pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &cpus);
         }
+        #endif
 
         pthread_create(&thread[i], &attr, _quad_grid_parallel, (void *) &pargs[i]);
     }
