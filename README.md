@@ -49,8 +49,9 @@ res = pyquad.quad_grid(test_integrand_func, 0, 1, grid, (1.0, 1.0, 1.0, 1.0))
 
 which reduces the runtime from 107.8 seconds to 1.7 seconds on my laptop. This
 can also be sped up by passing the kwarg `parallel=True` to `pyquad.quad_grid`
-whichch takes advantage of openMP. My laptop can get a 3x speed up using the
-parallel version.
+which takes advantage of shared memory parallelisation (pthreads). The number of
+threads can be specified with the kwarg `num_threads` and one-thread-per-core
+can be forced using `pin_threads=1`.
 
 Further examples can be found [here](https://github.com/AshKelly/pyquad/blob/master/examples/jupyter_example.ipynb)
 
@@ -58,9 +59,6 @@ Further examples can be found [here](https://github.com/AshKelly/pyquad/blob/mas
 
 To get started using the package you can use pip
 to download wheels for linux or osx,
-
-(NOTE: For parallelisation it is important to clone
-from github and compile as instructed below.)
 
 
 ```
@@ -79,15 +77,6 @@ and then go into the repository and run the setup file,
 cd pyquad
 python setup.py install
 ```
-
-or
-
-```
-cd pyquad
-python setup.py install --openmp
-```
-
-to compile with parallel capabilities.
 
 ### Requirements
 
