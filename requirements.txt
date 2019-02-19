@@ -1,4 +1,4 @@
-Cython==0.29.3
-llvmlite==0.27.0
-numba==0.42.0
-numpy==1.16.0
+Cython>=0.28.0
+llvmlite>=0.27.0
+numba>=0.40.0
+numpy>=1.16.0
