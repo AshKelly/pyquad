@@ -10,11 +10,9 @@ except ImportError:
 
 link_args = ["-std=c99"]
 
-# detect if openmp was passed, if so enable and strip
-if '--openmp' in sys.argv:
-    sys.argv.remove('--openmp')
-    link_args.append('-fopenmp')
-    link_args.append('-D OMP_ON=1')
+from sys import platform
+if platform == "linux" or platform == "linux2":
+    link_args.append("-D LINUX_MACH=1")
 
 src_files = ["pyquad/pyquad.pyx", "pyquad/integration/error.c",
              "pyquad/integration/qk.c", "pyquad/integration/qk21.c",
@@ -23,11 +21,11 @@ src_files = ["pyquad/pyquad.pyx", "pyquad/integration/error.c",
              ]
 
 ext_modules=[Extension("pyquad",
-             src_files,
-             extra_compile_args=link_args,
-             extra_link_args=link_args,
-             include_dirs=[np.get_include()],
-             language='c')]
+                       src_files,
+                       extra_compile_args=link_args,
+                       extra_link_args=link_args,
+                       include_dirs=[np.get_include()],
+                       language='c')]
 
 # Cythonize our modules
 from Cython.Build import cythonize
@@ -36,7 +34,7 @@ ext_modules = cythonize(ext_modules,
 
 setup(
     name='pyquad',
-    version='0.0.3.5',
+    version='0.0.4.0',
     author="Ashley J Kelly",
     license="LGPL-3.0",
     author_email="a.j.kelly@durham.ac.uk",
@@ -48,7 +46,7 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU General Public License (GPL)"
     ],
-    install_requires=['cython', 'numpy', 'numba'],
+    install_requires=['cython>=0.28.0', 'numpy>=1.16.0', 'numba>=0.40.0'],
     extras_require={
         'test': ['pytest', 'scipy'],
     },

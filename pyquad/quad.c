@@ -5,135 +5,37 @@
 #include <time.h>
 
 #include "integration/gsl_integration.h"
+#include "integrands.h"
 
-#ifdef OMP_ON
-#include <omp.h>
-#endif
-
-typedef double (*integrand)(double, ...);
-typedef double (*integrand_wrapper)(double, void *);
-
+#include <pthread.h>
 
 typedef struct{
-    double * args;
-    double * * grid_args;
-    integrand func;
-} params;
+    size_t limit;
+    params ps;
 
+    int num_grid_args;
+    int num_args;
 
-static double integrand_0(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x);
-}
+    double * grid;
+    double * result;
+    double * error;
+    double epsabs;
+    double epsrel;
+    double a;
+    double b;
 
-static double integrand_1(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0]);
-}
+    int upper;
+    int lower;
+} pthread_args;
 
-static double integrand_2(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1]);
-}
-
-static double integrand_3(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1], p->args[2]);
-}
-
-static double integrand_4(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3]);
-}
-
-static double integrand_5(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4]);
-}
-
-static double integrand_6(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
-                   p->args[5]);
-}
-
-static double integrand_7(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
-                   p->args[5], p->args[6]);
-}
-
-static double integrand_8(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
-                   p->args[5], p->args[6], p->args[7]);
-}
-
-static double integrand_9(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
-                   p->args[5], p->args[6], p->args[7], p->args[8]);
-}
-
-static double integrand_10(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
-                   p->args[5], p->args[6], p->args[7], p->args[8], p->args[9]);
-}
-
-static double integrand_11(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
-                   p->args[5], p->args[6], p->args[7], p->args[8], p->args[9],
-                   p->args[10]);
-}
-
-static double integrand_12(double x, void * vp){
-    params * p = (params *)vp;
-    return p->func(x, p->args[0], p->args[1], p->args[2], p->args[3], p->args[4],
-                   p->args[5], p->args[6], p->args[7], p->args[8], p->args[9],
-                   p->args[10], p->args[11]);
-}
-
-integrand_wrapper select_integrand(int num_args){
-    switch(num_args) {
-      case 0:
-        return integrand_0;
-      case 1:
-        return integrand_1;
-      case 2:
-        return integrand_2;
-      case 3:
-        return integrand_3;
-      case 4:
-        return integrand_4;
-      case 5:
-        return integrand_5;
-      case 6:
-        return integrand_6;
-      case 7:
-        return integrand_7;
-      case 8:
-        return integrand_8;
-      case 9:
-        return integrand_9;
-      case 10:
-        return integrand_10;
-      case 11:
-        return integrand_11;
-      case 12:
-        return integrand_12;
-      default:
-        return integrand_0;
-   }
-}
 
 void _quad(int num_args, double a, double b, void * p, double epsabs,
-           double epsrel, size_t limit, double * result, double * error){
+    double epsrel, size_t limit, double * result, double * error){
+
     gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
 
     gsl_function gfunc;
-    gfunc.function = select_integrand(num_args);
+    gfunc.function = integrand_functions[num_args][0];
     gfunc.params = p;
 
     gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, result, error);
@@ -142,61 +44,102 @@ void _quad(int num_args, double a, double b, void * p, double epsabs,
 
 
 void _quad_grid(int num_args, int num_grid_args, double a, double b, params ps,
-                int num, double epsabs, double epsrel, size_t limit,
-                double * result, double * error){
+    int num, double epsabs, double epsrel, size_t limit, double * grid,
+    double * result, double * error){
 
-    // Extend the args array and add the grid args
-    double * grid_args = (double *) malloc(sizeof(double) * (num_args + num_grid_args));
-    for(int i=0; i<num_args; i++){
-        grid_args[i + num_grid_args] = ps.args[i];
-    }
-    ps.args = &grid_args[0];
-
-    // Set up the integration wroskapce
+    // Set up the integration workspace
     gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
     gsl_function gfunc;
-    gfunc.function = select_integrand(num_args + num_grid_args);
+    gfunc.function = integrand_functions[num_args][num_grid_args];
     gfunc.params = (void *)&ps;
 
     for(int i=0; i<num; i++){
-        for(int j=0; j<num_grid_args; j++){
-            ps.args[j] = ps.grid_args[j][i];
-        }
-        gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, &result[i], &error[i]);
+        ps.grid_args = &grid[i*num_grid_args];
+        gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w,
+                             &result[i], &error[i]);
     }
 
-    free(grid_args);
     gsl_integration_workspace_free(w);
 }
 
 
-void _quad_grid_parallel(int num_args, int num_grid_args, double a, double b,
-                         params ps, int num, double epsabs, double epsrel,
-                         size_t limit, double * result, double * error){
-    #pragma omp parallel firstprivate(ps)
-    {
-    // Extend the args array and add the grid args
-    double * grid_args = (double *) malloc(sizeof(double) * (num_args + num_grid_args));
-    for(int i=0; i<num_args; i++){
-        grid_args[i + num_grid_args] = ps.args[i];
-    }
-    ps.args = &grid_args[0];
+void * _quad_grid_parallel(void * args){
+    pthread_args * pargs = (pthread_args *) args;
+    //printf("num_per_thread: %i - %i, %ld \n", pargs->lower, pargs->upper,
+    //       (unsigned int) pthread_self());
 
-    // Set up the integration wroskapce
-    gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
+    // Set up the integration workspace
+    gsl_integration_workspace * w = gsl_integration_workspace_alloc(pargs->limit);
     gsl_function gfunc;
-    gfunc.function = select_integrand(num_args + num_grid_args);
-    gfunc.params = (void *)&ps;
+    gfunc.function = integrand_functions[pargs->num_args][pargs->num_grid_args];
+    gfunc.params = (void *)&pargs->ps;
 
-    #pragma omp for schedule(static, 5000)
-    for(int i=0; i<num; i++){
-        for(int j=0; j<num_grid_args; j++){
-            ps.args[j] = ps.grid_args[j][i];
+    for(int i=pargs->lower; i<pargs->upper; i++){
+        pargs->ps.grid_args = &pargs->grid[i * pargs->num_grid_args];
+
+        gsl_integration_qags(&gfunc, pargs->a, pargs->b, pargs->epsabs,
+                             pargs->epsrel, pargs->limit, w, &pargs->result[i],
+                             &pargs->error[i]);
+    }
+    gsl_integration_workspace_free(w);
+
+    return NULL;
+}
+
+void _quad_grid_parallel_wrapper(int num_args, int num_grid_args, double a,
+    double b, params ps, int num, double epsabs, double epsrel, size_t limit,
+    double * grid, double * result, double * error, int num_threads,
+    int pin_threads){
+
+    int num_per_thread = num / num_threads;
+    pthread_args pargs[num_threads];
+    pthread_t thread[num_threads];
+
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+
+    #ifdef LINUX_MACH
+    cpu_set_t cpus;
+    #endif
+
+    //printf("num_per_thread: %i (%i, %i) \n", num_per_thread,
+    //       num, num_threads);
+    for(int i=0; i < num_threads; i++){
+        // Pass the relevant work
+        pargs[i].num_args = num_args;
+        pargs[i].num_grid_args = num_grid_args;
+        pargs[i].grid = grid;
+        pargs[i].limit = limit;
+        pargs[i].ps = ps;
+        pargs[i].result = result;
+        pargs[i].error = error;
+        pargs[i].a = a;
+        pargs[i].b = b;
+        pargs[i].epsabs = epsabs;
+        pargs[i].epsrel = epsrel;
+
+        // Get the range of integrals for this thread
+        pargs[i].lower = num_per_thread * i;
+        pargs[i].upper = num_per_thread * (i + 1);
+
+        // Just ensure there are no uncalculated integrals
+        if(i == (num_threads - 1)){
+            pargs[i].upper = num;
         }
-        gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, &result[i], &error[i]);
+
+        // Pin each thread to an individual core
+        #ifdef LINUX_MACH
+        if (pin_threads == 1){
+            CPU_ZERO(&cpus);
+            CPU_SET(i, &cpus);
+            pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &cpus);
+        }
+        #endif
+
+        pthread_create(&thread[i], &attr, _quad_grid_parallel, (void *) &pargs[i]);
     }
 
-    free(grid_args);
-    gsl_integration_workspace_free(w);
+    for(int i=0; i < num_threads; i++){
+        pthread_join(thread[i], NULL);
     }
 }
