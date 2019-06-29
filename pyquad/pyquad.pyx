@@ -76,6 +76,7 @@ def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
     return result, error
 
 
+@cython.boundscheck(False)
 def quad_grid(py_integrand, double a, double b,
               np.ndarray[np.float64_t, ndim=2] grid,
               args=(), double epsabs=1e-7, double epsrel=1e-7, int limit=250,
