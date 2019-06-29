@@ -8,7 +8,7 @@ try:
 except ImportError:
     raise ImportError("Please install numpy and cython before building pyquad!")
 
-link_args = ["-std=c99"]
+link_args = ["-std=c99", "-O3", "--fast-math"]
 
 from sys import platform
 if platform == "linux" or platform == "linux2":
