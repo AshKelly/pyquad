@@ -22,6 +22,14 @@
 #include "gsl_math.h"
 #include "gsl_integration.h"
 
+double pow_fast_ankerl(double a, double b){
+    union { double d; int x[2]; } u = { a };
+    u.x[1] = (int)(b * (u.x[1] - 1072632447) + 1072632447);
+    u.x[0] = 0;
+    return u.d;
+}
+
+
 static double rescale_error (double err, const double result_abs, const double result_asc) ;
 
 static double
@@ -31,7 +39,7 @@ rescale_error (double err, const double result_abs, const double result_asc)
 
   if (result_asc != 0 && err != 0)
       {
-        double scale = pow((200 * err / result_asc), 1.5) ;
+        double scale = pow_fast_ankerl((200 * err / result_asc), 1.5) ;
         
         if (scale < 1)
           {
