@@ -5,6 +5,7 @@
 #include <time.h>
 
 #include "integration/gsl_integration.h"
+#include "integration/gsl_errno.h"
 #include "integrands.h"
 
 #include <pthread.h>
@@ -26,6 +27,7 @@ typedef struct{
 
     int upper;
     int lower;
+    int * status;
 } pthread_args;
 
 
@@ -70,26 +72,32 @@ void * _quad_grid_parallel(void * args){
 
     // Set up the integration workspace
     gsl_integration_workspace * w = gsl_integration_workspace_alloc(pargs->limit);
+    // deactivate default gsl error handler
+    gsl_set_error_handler_off();
     gsl_function gfunc;
     gfunc.function = integrand_functions[pargs->num_args][pargs->num_grid_args];
     gfunc.params = (void *)&pargs->ps;
-
+    int status; // integral status, i.e, whether it has failed or not.
     for(int i=pargs->lower; i<pargs->upper; i++){
         pargs->ps.grid_args = &pargs->grid[i * pargs->num_grid_args];
 
-        gsl_integration_qags(&gfunc, pargs->a, pargs->b, pargs->epsabs,
+        status = gsl_integration_qags(&gfunc, pargs->a, pargs->b, pargs->epsabs,
                              pargs->epsrel, pargs->limit, w, &pargs->result[i],
                              &pargs->error[i]);
+	if (status) {
+	    if (status > pargs->status){
+  	        pargs->status = status;
+	    }
+	}
     }
     gsl_integration_workspace_free(w);
-
     return NULL;
 }
 
 void _quad_grid_parallel_wrapper(int num_args, int num_grid_args, double a,
     double b, params ps, int num, double epsabs, double epsrel, size_t limit,
     double * grid, double * result, double * error, int num_threads,
-    int pin_threads){
+    int pin_threads, int * status){
 
     int num_per_thread = num / num_threads;
     pthread_args pargs[num_threads];
@@ -117,6 +125,7 @@ void _quad_grid_parallel_wrapper(int num_args, int num_grid_args, double a,
         pargs[i].b = b;
         pargs[i].epsabs = epsabs;
         pargs[i].epsrel = epsrel;
+	pargs[i].status = GSL_SUCCESS;
 
         // Get the range of integrals for this thread
         pargs[i].lower = num_per_thread * i;
@@ -142,4 +151,10 @@ void _quad_grid_parallel_wrapper(int num_args, int num_grid_args, double a,
     for(int i=0; i < num_threads; i++){
         pthread_join(thread[i], NULL);
     }
+    for (int i=0; i < num_threads; i++){
+             status[i] = pargs[i].status;		
+    }
+    //}
+    //printf("%d\n",status);
+
 }
