@@ -86,7 +86,8 @@ gsl_finite (const double x)
 int
 gsl_finite (const double x)
 {
-  return finite(x);
+  // Roll our own is finite
+  return ((x) * 0 == 0);
 }
 # elif HAVE_IEEE_COMPARISONS
 int
