@@ -34,14 +34,16 @@ typedef struct{
 void _quad(int num_args, double a, double b, void * p, double epsabs,
     double epsrel, size_t limit, double * result, double * error){
 
-    gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
+    //gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
+    gsl_integration_cquad_workspace * w2 = gsl_integration_cquad_workspace_alloc(limit);
 
     gsl_function gfunc;
     gfunc.function = integrand_functions[num_args][0];
     gfunc.params = p;
-
-    gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, result, error);
-    gsl_integration_workspace_free(w);
+    //gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, result, error);
+    gsl_integration_cquad(&gfunc, a, b, epsabs, epsrel, w2, result, error, limit);
+    //gsl_integration_workspace_free(w);
+    gsl_integration_cquad_workspace_free(w2);
 }
 
 
@@ -50,7 +52,7 @@ void _quad_grid(int num_args, int num_grid_args, double a, double b, params ps,
     double * result, double * error){
 
     // Set up the integration workspace
-    gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
+    gsl_integration_cquad_workspace * w = gsl_integration_workspace_alloc(limit);
     gsl_function gfunc;
     gfunc.function = integrand_functions[num_args][num_grid_args];
     gfunc.params = (void *)&ps;
@@ -71,7 +73,8 @@ void * _quad_grid_parallel(void * args){
     //       (unsigned int) pthread_self());
 
     // Set up the integration workspace
-    gsl_integration_workspace * w = gsl_integration_workspace_alloc(pargs->limit);
+    //gsl_integration_workspace * w = gsl_integration_workspace_alloc(pargs->limit);
+    gsl_integration_workspace * w2 = gsl_integration_cquad_workspace_alloc(pargs->limit);
     // deactivate default gsl error handler
     gsl_set_error_handler_off();
     gsl_function gfunc;
@@ -81,16 +84,20 @@ void * _quad_grid_parallel(void * args){
     for(int i=pargs->lower; i<pargs->upper; i++){
         pargs->ps.grid_args = &pargs->grid[i * pargs->num_grid_args];
 
-        status = gsl_integration_qags(&gfunc, pargs->a, pargs->b, pargs->epsabs,
-                             pargs->epsrel, pargs->limit, w, &pargs->result[i],
-                             &pargs->error[i]);
+        //status = gsl_integration_qags(&gfunc, pargs->a, pargs->b, pargs->epsabs,
+        //                     pargs->epsrel, pargs->limit, w, &pargs->result[i],
+        //                     &pargs->error[i]);
+        status = gsl_integration_cquad(&gfunc, pargs->a, pargs->b, pargs->epsabs,
+                             pargs->epsrel, w2, &pargs->result[i],
+                             &pargs->error[i], pargs->limit);
 	if (status) {
 	    if (status > pargs->status){
   	        pargs->status = status;
 	    }
 	}
     }
-    gsl_integration_workspace_free(w);
+    //gsl_integration_workspace_free(w);
+    gsl_integration_cquad_workspace_free(w2);
     return NULL;
 }
 
