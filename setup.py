@@ -17,7 +17,9 @@ if platform == "linux" or platform == "linux2":
 src_files = ["pyquad/pyquad.pyx", "pyquad/integration/error.c",
              "pyquad/integration/qk.c", "pyquad/integration/qk21.c",
              "pyquad/integration/qk15.c", "pyquad/integration/qags.c",
-             "pyquad/integration/workspace.c"
+             "pyquad/integration/workspace.c", 
+             "pyquad/integration/cquad_const.c","pyquad/integration/cquad.c",
+             "pyquad/integration/romberg.c",
              ]
 
 ext_modules=[Extension("pyquad",

@@ -4,6 +4,7 @@ cimport numpy as np
 import inspect
 import numba
 import numpy as np
+import warnings
 
 from numba import cfunc
 from libc.stdlib cimport malloc, free
@@ -23,6 +24,14 @@ cfunc_sigs[11] = "float64(float64, float64, float64, float64, float64, float64, 
 cfunc_sigs[12] = "float64(float64, float64, float64, float64, float64, float64, float64, float64, float64, float64, float64, float64)"
 
 
+GSL_ERROR_DICT = {
+    11 : "Maximum number of iterations reached.",
+    18 : "Failed because of roundoff error.",
+    21 : "Apparent singularity detected.",
+    22 : "Integral or series is divergent",
+    1 : "Input domain error e.g. sqrt(-1)",
+}
+
 cdef extern from "quad.c":
     ctypedef double (*integrand)(double,  ...)
 
@@ -40,7 +49,7 @@ cdef extern from "quad.c":
     cdef void _quad_grid_parallel_wrapper(int num_args, int num_grid_args,
                     double a, double b, params args, int num, double epsabs,
                     double epsrel, size_t limit, double *, double * result,
-                    double * error, int num_threads, int pin_threads) nogil
+                    double * error, int num_threads, int pin_threads, int * status) nogil
 
 
 def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
@@ -108,7 +117,7 @@ def quad_grid(py_integrand, double a, double b,
     # Prepare arrays to store the integration results
     cdef np.float64_t[:] result = np.zeros(num_values, "float64")
     cdef np.float64_t[:] error = np.zeros(num_values, "float64")
-
+    cdef int[:] status = np.zeros(num_values, "int32")
     # Store the arguments which are fixed for each integral
     cdef params p
     p.args = <double *> malloc(sizeof(double) * num_args)
@@ -120,11 +129,15 @@ def quad_grid(py_integrand, double a, double b,
         with nogil:
             _quad_grid_parallel_wrapper(num_args, num_grid_args, a, b, p,
                     num_values, epsabs, epsrel, limit, &flat_grid[0],
-                    &result[0], &error[0], num_threads, pin_threads)
+                    &result[0], &error[0], num_threads, pin_threads, &status[0])
     else:
         _quad_grid(num_args, num_grid_args, a, b, p, num_values, epsabs, epsrel,
                    limit, &flat_grid[0], &result[0], &error[0])
 
     free(p.args)
-
+    # check errors and print warnings
+    for status_i in np.asarray(status):
+        if status_i:
+            wrng_msg = GSL_ERROR_DICT[status_i]
+            warnings.warn(wrng_msg)
     return np.asarray(result), np.asarray(error)
