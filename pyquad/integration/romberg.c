@@ -21,9 +21,9 @@
 
 //#include <config.h>
 #include <stdlib.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_integration.h>
+#include "gsl_math.h"
+#include "gsl_errno.h"
+#include "gsl_integration.h"
 
 #define ROMBERG_PRINT_ROW(i, r) \
   do { \

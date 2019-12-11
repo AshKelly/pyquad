@@ -20,12 +20,12 @@
 //#include <config.h>
 #include <stdlib.h>
 #include <math.h>
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_integration.h>
-
+#include "gsl_errno.h"
+#include "gsl_math.h"
+#include "gsl_integration.h"
 #include "cquad_const.c"
 #include "infnan.c"
+#include "gsl_nan.h"
 
 
 /* Allocates a workspace for the given maximum number of intervals.

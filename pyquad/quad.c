@@ -27,7 +27,7 @@ typedef struct{
 
     int upper;
     int lower;
-    int * status;
+    int status;
 } pthread_args;
 
 

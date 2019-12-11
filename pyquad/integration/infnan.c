@@ -22,11 +22,11 @@
 #define HAVE_DECL_FINITE 1
 #define HAVE_DECL_ISNAN 1
 #if HAVE_IEEEFP_H
-#include <ieeefp.h>
+#include "ieeefp.h"
 #endif
 #include "fdiv.c"
 
-#include <gsl/gsl_sys.h>
+#include "gsl_sys.h"
 
 double gsl_nan (void)
 {
