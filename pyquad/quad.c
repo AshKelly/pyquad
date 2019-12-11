@@ -28,35 +28,77 @@ typedef struct{
     int upper;
     int lower;
     int status;
+    int integration_method;
 } pthread_args;
 
 
-void _quad(int num_args, double a, double b, void * p, double epsabs,
-    double epsrel, size_t limit, double * result, double * error,
-    int integration_method){
+typedef int (*integration_func)(const gsl_function *f, double a, double b,
+                      double epsabs, double epsrel, size_t limit,
+                      void * workspace,
+                      double * result, double * abserr);
 
-    gsl_integration_cquad_workspace * w = gsl_integration_cquad_workspace_alloc(limit);
-    //gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
+
+void * allocate_workspace(int integration_method, size_t limit){
+    if (integration_method == 0){
+        return gsl_integration_workspace_alloc(limit);
+    }
+    else if (integration_method == 1){
+        return gsl_integration_cquad_workspace_alloc(limit);
+    }
+    return NULL;
+}
+
+void deallocate_workspace(int integration_method, void * w){
+    if (integration_method == 0){
+        gsl_integration_workspace_free(w);
+    }
+    else if (integration_method == 1){
+        gsl_integration_cquad_workspace_free(w);
+    }
+}
+
+
+integration_func select_integrator(int integration_method){
+    if (integration_method == 0){
+        return gsl_integration_qags;
+    }
+    else if (integration_method == 1){
+        return gsl_integration_cquad;
+    }
+    return NULL;
+}
+
+
+void _quad(int num_args, double a, double b, void * p, double epsabs,
+    double epsrel, size_t limit, double * result, double * error, int * status,
+    int integration_method){
+    // deactivate default gsl error handler
+    gsl_set_error_handler_off();
+
+    //  Select the integrator function
+    integration_func integrator = select_integrator(integration_method);
+
+    void * w = allocate_workspace(integration_method, limit);
 
     gsl_function gfunc;
     gfunc.function = integrand_functions[num_args][0];
     gfunc.params = p;
 
-    gsl_integration_cquad(&gfunc, a, b, epsabs, epsrel, w, result, error, &limit);
-    //gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, result, error);
+    (*status) = (*integrator)(&gfunc, a, b, epsabs, epsrel, limit, w, result, error);
 
-    gsl_integration_cquad_workspace_free(w);
-    //gsl_integration_workspace_free(w);
+    deallocate_workspace(integration_method, w);
 }
 
 
 void _quad_grid(int num_args, int num_grid_args, double a, double b, params ps,
-    int num, double epsabs, double epsrel, size_t limit, double * grid,
-    double * result, double * error){
+     int num, double epsabs, double epsrel, size_t limit, double * grid,
+    double * result, double * error, int * status, int integration_method){
 
-    // Set up the integration workspace
-    gsl_integration_cquad_workspace * w = gsl_integration_cquad_workspace_alloc(limit);
-    //gsl_integration_workspace * w = gsl_integration_workspace_alloc(limit);
+    // deactivate default gsl error handler
+    gsl_set_error_handler_off();
+
+    integration_func integrator = select_integrator(integration_method);
+    void * w = allocate_workspace(integration_method, limit);
 
     gsl_function gfunc;
     gfunc.function = integrand_functions[num_args][num_grid_args];
@@ -64,26 +106,22 @@ void _quad_grid(int num_args, int num_grid_args, double a, double b, params ps,
 
     for(int i=0; i<num; i++){
         ps.grid_args = &grid[i*num_grid_args];
-	    //gsl_integration_qags(&gfunc, a, b, epsabs, epsrel, limit, w, &result[i], &error[i]);
-	    gsl_integration_cquad(&gfunc, a, b, epsabs, epsrel, w, &result[i], &error[i], &limit);
+        status[i] = (*integrator)(&gfunc, a, b, epsabs, epsrel, limit, w, &result[i], &error[i]);
     }
 
-    //gsl_integration_workspace_free(w);
-    gsl_integration_cquad_workspace_free(w);
+    deallocate_workspace(integration_method, w);
 }
 
 
 void * _quad_grid_parallel(void * args){
-    pthread_args * pargs = (pthread_args *) args;
-    //printf("num_per_thread: %i - %i, %ld \n", pargs->lower, pargs->upper,
-    //       (unsigned int) pthread_self());
-
-    // Set up the integration workspace
-    //gsl_integration_workspace * w = gsl_integration_workspace_alloc(pargs->limit);
-    gsl_integration_cquad_workspace * w = gsl_integration_cquad_workspace_alloc(pargs->limit);
-
     // deactivate default gsl error handler
     gsl_set_error_handler_off();
+
+    pthread_args * pargs = (pthread_args *) args;
+
+    int integration_method = pargs->integration_method;
+    integration_func integrator = select_integrator(integration_method);
+    void * w = allocate_workspace(integration_method, pargs->limit);
 
     gsl_function gfunc;
     gfunc.function = integrand_functions[pargs->num_args][pargs->num_grid_args];
@@ -92,27 +130,26 @@ void * _quad_grid_parallel(void * args){
     for(int i=pargs->lower; i<pargs->upper; i++){
         pargs->ps.grid_args = &pargs->grid[i * pargs->num_grid_args];
 
-        //status = gsl_integration_qags(&gfunc, pargs->a, pargs->b, pargs->epsabs,
-        //                     pargs->epsrel, pargs->limit, w, &pargs->result[i],
-        //                     &pargs->error[i]);
-        status = gsl_integration_cquad(&gfunc, pargs->a, pargs->b, pargs->epsabs,
-                             pargs->epsrel, w, &pargs->result[i],
-                             &pargs->error[i], &pargs->limit);
-	if (status) {
-	    if (status > pargs->status){
-  	        pargs->status = status;
-	    }
-	}
+        status = (*integrator)(&gfunc, pargs->a, pargs->b, pargs->epsabs,
+                             pargs->epsrel, pargs->limit, w, &pargs->result[i],
+                             &pargs->error[i]);
+        if (status) {
+            if (status > pargs->status){
+                pargs->status = status;
+            }
+        }
     }
-    //gsl_integration_workspace_free(w);
-    gsl_integration_cquad_workspace_free(w);
+
+    deallocate_workspace(integration_method, w);
+
     return NULL;
 }
+
 
 void _quad_grid_parallel_wrapper(int num_args, int num_grid_args, double a,
     double b, params ps, int num, double epsabs, double epsrel, size_t limit,
     double * grid, double * result, double * error, int num_threads,
-    int pin_threads, int * status){
+    int pin_threads, int * status, int integration_method){
 
     int num_per_thread = num / num_threads;
     pthread_args pargs[num_threads];
@@ -139,6 +176,7 @@ void _quad_grid_parallel_wrapper(int num_args, int num_grid_args, double a,
         pargs[i].epsabs = epsabs;
         pargs[i].epsrel = epsrel;
         pargs[i].status = GSL_SUCCESS;
+        pargs[i].integration_method = integration_method;
 
         // Get the range of integrals for this thread
         pargs[i].lower = num_per_thread * i;

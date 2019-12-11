@@ -39,11 +39,11 @@ int
 gsl_integration_qags (const gsl_function *f,
                       double a, double b,
                       double epsabs, double epsrel, size_t limit,
-                      gsl_integration_workspace * workspace,
+                      void * workspace,
                       double * result, double * abserr)
 {
   int status = qags (f, a, b, epsabs, epsrel, limit,
-                     workspace, 
+                     (gsl_integration_workspace *)workspace, 
                      result, abserr, 
                      &gsl_integration_qk21) ;
   return status ;

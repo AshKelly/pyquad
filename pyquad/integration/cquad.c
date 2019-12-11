@@ -184,15 +184,24 @@ downdate (double *c, int n, int d, int *nans, int nnans)
 }
 
 
+int gsl_integration_cquad(const gsl_function *f,
+                      double a, double b,
+                      double epsabs, double epsrel, size_t limit,
+                      void * ws,
+                      double * result, double * abserr){
+
+    int status = gsl_integration_cquad_ (f, a, b, epsabs, epsrel,
+		       (gsl_integration_cquad_workspace *) ws, result, abserr, &limit);
+    return status;
+}
+
+
 /* The actual integration routine.
     */
-
-int
-gsl_integration_cquad (const gsl_function * f, double a, double b,
+int gsl_integration_cquad_ (const gsl_function * f, double a, double b,
 		       double epsabs, double epsrel,
 		       gsl_integration_cquad_workspace * ws,
-		       double *result, double *abserr, size_t * nevals)
-{
+		       double *result, double *abserr, size_t * nevals){
 
   /* Some constants that we will need. */
   static const int n[4] = { 4, 8, 16, 32 };
@@ -203,7 +212,7 @@ gsl_integration_cquad (const gsl_function * f, double a, double b,
 
   /* Actual variables (as opposed to constants above). */
   double m, h, temp;
-  double igral, err, igral_final, err_final, err_excess;
+  double igral, err, igral_final, err_final;
   int nivals, neval = 0;
   int i, j, d, split, t;
   int nnans, nans[32];
@@ -283,7 +292,6 @@ gsl_integration_cquad (const gsl_function * f, double a, double b,
   nivals = 1;
   igral_final = 0.0;
   err_final = 0.0;
-  err_excess = 0.0;
 
 
   /* Main loop. */

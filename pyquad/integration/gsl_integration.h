@@ -209,7 +209,7 @@ int gsl_integration_qagil (gsl_function * f,
 int gsl_integration_qags (const gsl_function * f,
                           double a, double b,
                           double epsabs, double epsrel, size_t limit,
-                          gsl_integration_workspace * workspace,
+                          void * workspace,
                           double *result, double *abserr);
 
 int gsl_integration_qagp (const gsl_function * f,
@@ -309,11 +309,16 @@ gsl_integration_cquad_workspace_alloc (const size_t n);
 void
 gsl_integration_cquad_workspace_free (gsl_integration_cquad_workspace * w);
 
+int gsl_integration_cquad(const gsl_function *f,
+                      double a, double b,
+                      double epsabs, double epsrel, size_t limit,
+                      void * ws,
+                      double * result, double * abserr);
 int
-gsl_integration_cquad (const gsl_function * f, double a, double b,
-		                   double epsabs, double epsrel,
-		                   gsl_integration_cquad_workspace * ws,
-		                   double *result, double *abserr, size_t * nevals);
+gsl_integration_cquad_ (const gsl_function * f, double a, double b,
+                                  double epsabs, double epsrel,
+                                  gsl_integration_cquad_workspace * ws,
+                                  double *result, double *abserr, size_t * nevals);
 
 /* Romberg integration workspace and routines */
 
