@@ -10,7 +10,7 @@ from numba import cfunc
 from libc.stdlib cimport malloc, free
 
 
-__version__ = '0.5'
+__version__ = '0.6'
 
 
 INTEGRATION_MAP = {
