@@ -115,8 +115,8 @@ __BEGIN_DECLS
 /* Definition of an arbitrary function with parameters */
 
 struct gsl_function_struct {
-  double (*function)(double x, void* params);
-  void* params;
+    double (*function)(double x, void *params);
+    void *params;
 };
 
 typedef struct gsl_function_struct gsl_function;
@@ -126,10 +126,10 @@ typedef struct gsl_function_struct gsl_function;
 /* Definition of an arbitrary function returning two values, r1, r2 */
 
 struct gsl_function_fdf_struct {
-  double (*f)(double x, void* params);
-  double (*df)(double x, void* params);
-  void (*fdf)(double x, void* params, double* f, double* df);
-  void* params;
+    double (*f)(double x, void *params);
+    double (*df)(double x, void *params);
+    void (*fdf)(double x, void *params, double *f, double *df);
+    void *params;
 };
 
 typedef struct gsl_function_fdf_struct gsl_function_fdf;
@@ -137,13 +137,13 @@ typedef struct gsl_function_fdf_struct gsl_function_fdf;
 #define GSL_FN_FDF_EVAL_F(FDF, x) (*((FDF)->f))(x, (FDF)->params)
 #define GSL_FN_FDF_EVAL_DF(FDF, x) (*((FDF)->df))(x, (FDF)->params)
 #define GSL_FN_FDF_EVAL_F_DF(FDF, x, y, dy) \
-  (*((FDF)->fdf))(x, (FDF)->params, (y), (dy))
+    (*((FDF)->fdf))(x, (FDF)->params, (y), (dy))
 
 /* Definition of an arbitrary vector-valued function with parameters */
 
 struct gsl_function_vec_struct {
-  int (*function)(double x, double y[], void* params);
-  void* params;
+    int (*function)(double x, double y[], void *params);
+    void *params;
 };
 
 typedef struct gsl_function_vec_struct gsl_function_vec;

@@ -40,17 +40,17 @@ __BEGIN_DECLS
 /* Workspace for adaptive integrators */
 
 typedef struct {
-  size_t limit;
-  size_t size;
-  size_t nrmax;
-  size_t i;
-  size_t maximum_level;
-  double *alist;
-  double *blist;
-  double *rlist;
-  double *elist;
-  size_t *order;
-  size_t *level;
+    size_t limit;
+    size_t size;
+    size_t nrmax;
+    size_t i;
+    size_t maximum_level;
+    double *alist;
+    double *blist;
+    double *rlist;
+    double *elist;
+    size_t *order;
+    size_t *level;
 } gsl_integration_workspace;
 
 gsl_integration_workspace *gsl_integration_workspace_alloc(const size_t n);
@@ -60,14 +60,14 @@ void gsl_integration_workspace_free(gsl_integration_workspace *w);
 /* Workspace for QAWS integrator */
 
 typedef struct {
-  double alpha;
-  double beta;
-  int mu;
-  int nu;
-  double ri[25];
-  double rj[25];
-  double rg[25];
-  double rh[25];
+    double alpha;
+    double beta;
+    int mu;
+    int nu;
+    double ri[25];
+    double rj[25];
+    double rg[25];
+    double rh[25];
 } gsl_integration_qaws_table;
 
 gsl_integration_qaws_table *gsl_integration_qaws_table_alloc(double alpha,
@@ -84,12 +84,12 @@ void gsl_integration_qaws_table_free(gsl_integration_qaws_table *t);
 enum gsl_integration_qawo_enum { GSL_INTEG_COSINE, GSL_INTEG_SINE };
 
 typedef struct {
-  size_t n;
-  double omega;
-  double L;
-  double par;
-  enum gsl_integration_qawo_enum sine;
-  double *chebmo;
+    size_t n;
+    double omega;
+    double L;
+    double par;
+    enum gsl_integration_qawo_enum sine;
+    double *chebmo;
 } gsl_integration_qawo_table;
 
 gsl_integration_qawo_table *gsl_integration_qawo_table_alloc(
@@ -141,12 +141,12 @@ void gsl_integration_qcheb(gsl_function *f, double a, double b, double *cheb12,
    integers (1-6). We'll use symbolic constants to refer to them.  */
 
 enum {
-  GSL_INTEG_GAUSS15 = 1, /* 15 point Gauss-Kronrod rule */
-  GSL_INTEG_GAUSS21 = 2, /* 21 point Gauss-Kronrod rule */
-  GSL_INTEG_GAUSS31 = 3, /* 31 point Gauss-Kronrod rule */
-  GSL_INTEG_GAUSS41 = 4, /* 41 point Gauss-Kronrod rule */
-  GSL_INTEG_GAUSS51 = 5, /* 51 point Gauss-Kronrod rule */
-  GSL_INTEG_GAUSS61 = 6  /* 61 point Gauss-Kronrod rule */
+    GSL_INTEG_GAUSS15 = 1, /* 15 point Gauss-Kronrod rule */
+    GSL_INTEG_GAUSS21 = 2, /* 21 point Gauss-Kronrod rule */
+    GSL_INTEG_GAUSS31 = 3, /* 31 point Gauss-Kronrod rule */
+    GSL_INTEG_GAUSS41 = 4, /* 41 point Gauss-Kronrod rule */
+    GSL_INTEG_GAUSS51 = 5, /* 51 point Gauss-Kronrod rule */
+    GSL_INTEG_GAUSS61 = 6  /* 61 point Gauss-Kronrod rule */
 };
 
 void gsl_integration_qk(const int n, const double xgk[], const double wg[],
@@ -180,8 +180,7 @@ int gsl_integration_qagil(gsl_function *f, double b, double epsabs,
 
 int gsl_integration_qags(const gsl_function *f, double a, double b,
                          double epsabs, double epsrel, size_t limit,
-                         gsl_integration_workspace *workspace, double *result,
-                         double *abserr);
+                         void *workspace, double *result, double *abserr);
 
 int gsl_integration_qagp(const gsl_function *f, double *pts, size_t npts,
                          double epsabs, double epsrel, size_t limit,
@@ -216,10 +215,10 @@ int gsl_integration_qawf(gsl_function *f, const double a, const double epsabs,
 /* Workspace for fixed-order Gauss-Legendre integration */
 
 typedef struct {
-  size_t n;        /* number of points */
-  double *x;       /* Gauss abscissae/points */
-  double *w;       /* Gauss weights for each abscissae */
-  int precomputed; /* high precision abscissae/weights precomputed? */
+    size_t n;        /* number of points */
+    double *x;       /* Gauss abscissae/points */
+    double *w;       /* Gauss weights for each abscissae */
+    int precomputed; /* high precision abscissae/weights precomputed? */
 } gsl_integration_glfixed_table;
 
 gsl_integration_glfixed_table *gsl_integration_glfixed_table_alloc(size_t n);
@@ -241,18 +240,18 @@ int gsl_integration_glfixed_point(double a, double b, size_t i, double *xi,
 
 /* Data of a single interval */
 typedef struct {
-  double a, b;
-  double c[64];
-  double fx[33];
-  double igral, err;
-  int depth, rdepth, ndiv;
+    double a, b;
+    double c[64];
+    double fx[33];
+    double igral, err;
+    int depth, rdepth, ndiv;
 } gsl_integration_cquad_ival;
 
 /* The workspace is just a collection of intervals */
 typedef struct {
-  size_t size;
-  gsl_integration_cquad_ival *ivals;
-  size_t *heap;
+    size_t size;
+    gsl_integration_cquad_ival *ivals;
+    size_t *heap;
 } gsl_integration_cquad_workspace;
 
 gsl_integration_cquad_workspace *gsl_integration_cquad_workspace_alloc(
@@ -261,16 +260,15 @@ gsl_integration_cquad_workspace *gsl_integration_cquad_workspace_alloc(
 void gsl_integration_cquad_workspace_free(gsl_integration_cquad_workspace *w);
 
 int gsl_integration_cquad(const gsl_function *f, double a, double b,
-                          double epsabs, double epsrel,
-                          gsl_integration_cquad_workspace *ws, double *result,
-                          double *abserr, size_t *nevals);
+                          double epsabs, double epsrel, size_t limit, void *ws,
+                          double *result, double *abserr);
 
 /* Romberg integration workspace and routines */
 
 typedef struct {
-  size_t n;      /* maximum number of steps */
-  double *work1; /* workspace for a row of R matrix, size n */
-  double *work2; /* workspace for a row of R matrix, size n */
+    size_t n;      /* maximum number of steps */
+    double *work1; /* workspace for a row of R matrix, size n */
+    double *work2; /* workspace for a row of R matrix, size n */
 } gsl_integration_romberg_workspace;
 
 gsl_integration_romberg_workspace *gsl_integration_romberg_alloc(
@@ -284,30 +282,30 @@ int gsl_integration_romberg(const gsl_function *f, const double a,
 /* IQPACK related structures and routines */
 
 typedef struct {
-  double alpha;
-  double beta;
-  double a;
-  double b;
-  double zemu;
-  double shft;
-  double slp;
-  double al;
-  double be;
+    double alpha;
+    double beta;
+    double a;
+    double b;
+    double zemu;
+    double shft;
+    double slp;
+    double al;
+    double be;
 } gsl_integration_fixed_params;
 
 typedef struct {
-  int (*check)(const size_t n, const gsl_integration_fixed_params *params);
-  int (*init)(const size_t n, double *diag, double *subdiag,
-              gsl_integration_fixed_params *params);
+    int (*check)(const size_t n, const gsl_integration_fixed_params *params);
+    int (*init)(const size_t n, double *diag, double *subdiag,
+                gsl_integration_fixed_params *params);
 } gsl_integration_fixed_type;
 
 typedef struct {
-  size_t n;        /* number of nodes/weights */
-  double *weights; /* quadrature weights */
-  double *x;       /* quadrature nodes */
-  double *diag;    /* diagonal of Jacobi matrix */
-  double *subdiag; /* subdiagonal of Jacobi matrix */
-  const gsl_integration_fixed_type *type;
+    size_t n;        /* number of nodes/weights */
+    double *weights; /* quadrature weights */
+    double *x;       /* quadrature nodes */
+    double *diag;    /* diagonal of Jacobi matrix */
+    double *subdiag; /* subdiagonal of Jacobi matrix */
+    const gsl_integration_fixed_type *type;
 } gsl_integration_fixed_workspace;
 
 /* IQPACK integral types */

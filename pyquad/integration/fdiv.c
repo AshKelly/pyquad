@@ -1,6 +1,6 @@
-/* integration/initialise.c
+/* sys/fdiv.c
  *
- * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2007 Brian Gough
+ * Copyright (C) 2001, 2007 Brian Gough
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +18,8 @@
  * USA.
  */
 
-static inline void initialise(gsl_integration_workspace *workspace, double a,
-                              double b);
+//#include <config.h>
+#include <math.h>
+#include "gsl_sys.h"
 
-static inline void initialise(gsl_integration_workspace *workspace, double a,
-                              double b) {
-    workspace->size = 0;
-    workspace->nrmax = 0;
-    workspace->i = 0;
-    workspace->alist[0] = a;
-    workspace->blist[0] = b;
-    workspace->rlist[0] = 0.0;
-    workspace->elist[0] = 0.0;
-    workspace->order[0] = 0;
-    workspace->level[0] = 0;
-
-    workspace->maximum_level = 0;
-}
+double gsl_fdiv(const double x, const double y) { return x / y; }

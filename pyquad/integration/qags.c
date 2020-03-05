@@ -33,16 +33,15 @@
 
 static int qags(const gsl_function *f, const double a, const double b,
                 const double epsabs, const double epsrel, const size_t limit,
-                gsl_integration_workspace *workspace, double *result,
-                double *abserr, gsl_integration_rule *q);
+                void *workspace, double *result, double *abserr,
+                gsl_integration_rule *q);
 
 int gsl_integration_qags(const gsl_function *f, double a, double b,
                          double epsabs, double epsrel, size_t limit,
-                         gsl_integration_workspace *workspace, double *result,
-                         double *abserr) {
-  int status = qags(f, a, b, epsabs, epsrel, limit, workspace, result, abserr,
-                    &gsl_integration_qk21);
-  return status;
+                         void *workspace, double *result, double *abserr) {
+    int status = qags(f, a, b, epsabs, epsrel, limit, workspace, result, abserr,
+                      &gsl_integration_qk21);
+    return status;
 }
 
 /* QAGI: evaluate an integral over an infinite range using the
@@ -57,24 +56,24 @@ static double i_transform(double t, void *params);
 int gsl_integration_qagi(gsl_function *f, double epsabs, double epsrel,
                          size_t limit, gsl_integration_workspace *workspace,
                          double *result, double *abserr) {
-  int status;
+    int status;
 
-  gsl_function f_transform;
+    gsl_function f_transform;
 
-  f_transform.function = &i_transform;
-  f_transform.params = f;
+    f_transform.function = &i_transform;
+    f_transform.params = f;
 
-  status = qags(&f_transform, 0.0, 1.0, epsabs, epsrel, limit, workspace,
-                result, abserr, &gsl_integration_qk15);
+    status = qags(&f_transform, 0.0, 1.0, epsabs, epsrel, limit, workspace,
+                  result, abserr, &gsl_integration_qk15);
 
-  return status;
+    return status;
 }
 
 static double i_transform(double t, void *params) {
-  gsl_function *f = (gsl_function *)params;
-  double x = (1 - t) / t;
-  double y = GSL_FN_EVAL(f, x) + GSL_FN_EVAL(f, -x);
-  return (y / t) / t;
+    gsl_function *f = (gsl_function *)params;
+    double x = (1 - t) / t;
+    double y = GSL_FN_EVAL(f, x) + GSL_FN_EVAL(f, -x);
+    return (y / t) / t;
 }
 
 /* QAGIL: Evaluate an integral over an infinite range using the
@@ -85,8 +84,8 @@ static double i_transform(double t, void *params) {
    */
 
 struct il_params {
-  double b;
-  gsl_function *f;
+    double b;
+    gsl_function *f;
 };
 
 static double il_transform(double t, void *params);
@@ -95,30 +94,30 @@ int gsl_integration_qagil(gsl_function *f, double b, double epsabs,
                           double epsrel, size_t limit,
                           gsl_integration_workspace *workspace, double *result,
                           double *abserr) {
-  int status;
+    int status;
 
-  gsl_function f_transform;
-  struct il_params transform_params;
+    gsl_function f_transform;
+    struct il_params transform_params;
 
-  transform_params.b = b;
-  transform_params.f = f;
+    transform_params.b = b;
+    transform_params.f = f;
 
-  f_transform.function = &il_transform;
-  f_transform.params = &transform_params;
+    f_transform.function = &il_transform;
+    f_transform.params = &transform_params;
 
-  status = qags(&f_transform, 0.0, 1.0, epsabs, epsrel, limit, workspace,
-                result, abserr, &gsl_integration_qk15);
+    status = qags(&f_transform, 0.0, 1.0, epsabs, epsrel, limit, workspace,
+                  result, abserr, &gsl_integration_qk15);
 
-  return status;
+    return status;
 }
 
 static double il_transform(double t, void *params) {
-  struct il_params *p = (struct il_params *)params;
-  double b = p->b;
-  gsl_function *f = p->f;
-  double x = b - (1 - t) / t;
-  double y = GSL_FN_EVAL(f, x);
-  return (y / t) / t;
+    struct il_params *p = (struct il_params *)params;
+    double b = p->b;
+    gsl_function *f = p->f;
+    double x = b - (1 - t) / t;
+    double y = GSL_FN_EVAL(f, x);
+    return (y / t) / t;
 }
 
 /* QAGIU: Evaluate an integral over an infinite range using the
@@ -129,8 +128,8 @@ static double il_transform(double t, void *params) {
    */
 
 struct iu_params {
-  double a;
-  gsl_function *f;
+    double a;
+    gsl_function *f;
 };
 
 static double iu_transform(double t, void *params);
@@ -139,336 +138,342 @@ int gsl_integration_qagiu(gsl_function *f, double a, double epsabs,
                           double epsrel, size_t limit,
                           gsl_integration_workspace *workspace, double *result,
                           double *abserr) {
-  int status;
+    int status;
 
-  gsl_function f_transform;
-  struct iu_params transform_params;
+    gsl_function f_transform;
+    struct iu_params transform_params;
 
-  transform_params.a = a;
-  transform_params.f = f;
+    transform_params.a = a;
+    transform_params.f = f;
 
-  f_transform.function = &iu_transform;
-  f_transform.params = &transform_params;
+    f_transform.function = &iu_transform;
+    f_transform.params = &transform_params;
 
-  status = qags(&f_transform, 0.0, 1.0, epsabs, epsrel, limit, workspace,
-                result, abserr, &gsl_integration_qk15);
+    status = qags(&f_transform, 0.0, 1.0, epsabs, epsrel, limit, workspace,
+                  result, abserr, &gsl_integration_qk15);
 
-  return status;
+    return status;
 }
 
 static double iu_transform(double t, void *params) {
-  struct iu_params *p = (struct iu_params *)params;
-  double a = p->a;
-  gsl_function *f = p->f;
-  double x = a + (1 - t) / t;
-  double y = GSL_FN_EVAL(f, x);
-  return (y / t) / t;
+    struct iu_params *p = (struct iu_params *)params;
+    double a = p->a;
+    gsl_function *f = p->f;
+    double x = a + (1 - t) / t;
+    double y = GSL_FN_EVAL(f, x);
+    return (y / t) / t;
 }
 
 /* Main integration function */
 
 static int qags(const gsl_function *f, const double a, const double b,
                 const double epsabs, const double epsrel, const size_t limit,
-                gsl_integration_workspace *workspace, double *result,
-                double *abserr, gsl_integration_rule *q) {
-  double area, errsum;
-  double res_ext, err_ext;
-  double result0, abserr0, resabs0, resasc0;
-  double tolerance;
+                void *void_workspace, double *result, double *abserr,
+                gsl_integration_rule *q) {
+    /* recast the workspace back from the generic void */
+    gsl_integration_workspace *workspace =
+        (gsl_integration_workspace *)void_workspace;
 
-  double ertest = 0;
-  double error_over_large_intervals = 0;
-  double reseps = 0, abseps = 0, correc = 0;
-  size_t ktmin = 0;
-  int roundoff_type1 = 0, roundoff_type2 = 0, roundoff_type3 = 0;
-  int error_type = 0, error_type2 = 0;
+    double area, errsum;
+    double res_ext, err_ext;
+    double result0, abserr0, resabs0, resasc0;
+    double tolerance;
 
-  size_t iteration = 0;
+    double ertest = 0;
+    double error_over_large_intervals = 0;
+    double reseps = 0, abseps = 0, correc = 0;
+    size_t ktmin = 0;
+    int roundoff_type1 = 0, roundoff_type2 = 0, roundoff_type3 = 0;
+    int error_type = 0, error_type2 = 0;
 
-  int positive_integrand = 0;
-  int extrapolate = 0;
-  int disallow_extrapolation = 0;
+    size_t iteration = 0;
 
-  struct extrapolation_table table;
+    int positive_integrand = 0;
+    int extrapolate = 0;
+    int disallow_extrapolation = 0;
 
-  /* Initialize results */
+    struct extrapolation_table table;
 
-  initialise(workspace, a, b);
+    /* Initialize results */
 
-  *result = 0;
-  *abserr = 0;
+    initialise(workspace, a, b);
 
-  if (limit > workspace->limit) {
-    return GSL_EINVAL;
-  }
+    *result = 0;
+    *abserr = 0;
 
-  /* Test on accuracy */
+    if (limit > workspace->limit) {
+        return GSL_EINVAL;
+    }
 
-  if (epsabs <= 0 && (epsrel < 50 * GSL_DBL_EPSILON || epsrel < 0.5e-28)) {
-    return GSL_EBADTOL;
-  }
+    /* Test on accuracy */
 
-  /* Perform the first integration */
+    if (epsabs <= 0 && (epsrel < 50 * GSL_DBL_EPSILON || epsrel < 0.5e-28)) {
+        return GSL_EBADTOL;
+    }
 
-  q(f, a, b, &result0, &abserr0, &resabs0, &resasc0);
+    /* Perform the first integration */
 
-  set_initial_result(workspace, result0, abserr0);
+    q(f, a, b, &result0, &abserr0, &resabs0, &resasc0);
 
-  tolerance = GSL_MAX_DBL(epsabs, epsrel * fabs(result0));
+    set_initial_result(workspace, result0, abserr0);
 
-  if (abserr0 <= 100 * GSL_DBL_EPSILON * resabs0 && abserr0 > tolerance) {
-    *result = result0;
-    *abserr = abserr0;
+    tolerance = GSL_MAX_DBL(epsabs, epsrel * fabs(result0));
 
-    return GSL_EROUND;
-  } else if ((abserr0 <= tolerance && abserr0 != resasc0) || abserr0 == 0.0) {
-    *result = result0;
-    *abserr = abserr0;
+    if (abserr0 <= 100 * GSL_DBL_EPSILON * resabs0 && abserr0 > tolerance) {
+        *result = result0;
+        *abserr = abserr0;
 
-    return 0;
-  } else if (limit == 1) {
-    *result = result0;
-    *abserr = abserr0;
+        return GSL_EROUND;
+    } else if ((abserr0 <= tolerance && abserr0 != resasc0) || abserr0 == 0.0) {
+        *result = result0;
+        *abserr = abserr0;
 
-    return GSL_EMAXITER;
-  }
+        return 0;
+    } else if (limit == 1) {
+        *result = result0;
+        *abserr = abserr0;
 
-  /* Initialization */
+        return GSL_EMAXITER;
+    }
 
-  initialise_table(&table);
-  append_table(&table, result0);
+    /* Initialization */
 
-  area = result0;
-  errsum = abserr0;
+    initialise_table(&table);
+    append_table(&table, result0);
 
-  res_ext = result0;
-  err_ext = GSL_DBL_MAX;
+    area = result0;
+    errsum = abserr0;
 
-  positive_integrand = test_positivity(result0, resabs0);
+    res_ext = result0;
+    err_ext = GSL_DBL_MAX;
 
-  iteration = 1;
+    positive_integrand = test_positivity(result0, resabs0);
 
-  do {
-    size_t current_level;
-    double a1, b1, a2, b2;
-    double a_i, b_i, r_i, e_i;
-    double area1 = 0, area2 = 0, area12 = 0;
-    double error1 = 0, error2 = 0, error12 = 0;
-    double resasc1, resasc2;
-    double resabs1, resabs2;
-    double last_e_i;
+    iteration = 1;
 
-    /* Bisect the subinterval with the largest error estimate */
+    do {
+        size_t current_level;
+        double a1, b1, a2, b2;
+        double a_i, b_i, r_i, e_i;
+        double area1 = 0, area2 = 0, area12 = 0;
+        double error1 = 0, error2 = 0, error12 = 0;
+        double resasc1, resasc2;
+        double resabs1, resabs2;
+        double last_e_i;
 
-    retrieve(workspace, &a_i, &b_i, &r_i, &e_i);
+        /* Bisect the subinterval with the largest error estimate */
 
-    current_level = workspace->level[workspace->i] + 1;
+        retrieve(workspace, &a_i, &b_i, &r_i, &e_i);
 
-    a1 = a_i;
-    b1 = 0.5 * (a_i + b_i);
-    a2 = b1;
-    b2 = b_i;
+        current_level = workspace->level[workspace->i] + 1;
 
-    iteration++;
+        a1 = a_i;
+        b1 = 0.5 * (a_i + b_i);
+        a2 = b1;
+        b2 = b_i;
 
-    q(f, a1, b1, &area1, &error1, &resabs1, &resasc1);
-    q(f, a2, b2, &area2, &error2, &resabs2, &resasc2);
+        iteration++;
 
-    area12 = area1 + area2;
-    error12 = error1 + error2;
-    last_e_i = e_i;
+        q(f, a1, b1, &area1, &error1, &resabs1, &resasc1);
+        q(f, a2, b2, &area2, &error2, &resabs2, &resasc2);
 
-    /* Improve previous approximations to the integral and test for
-       accuracy.
+        area12 = area1 + area2;
+        error12 = error1 + error2;
+        last_e_i = e_i;
 
-       We write these expressions in the same way as the original
-       QUADPACK code so that the rounding errors are the same, which
-       makes testing easier. */
+        /* Improve previous approximations to the integral and test for
+           accuracy.
 
-    errsum = errsum + error12 - e_i;
-    area = area + area12 - r_i;
+           We write these expressions in the same way as the original
+           QUADPACK code so that the rounding errors are the same, which
+           makes testing easier. */
 
-    tolerance = GSL_MAX_DBL(epsabs, epsrel * fabs(area));
+        errsum = errsum + error12 - e_i;
+        area = area + area12 - r_i;
 
-    if (resasc1 != error1 && resasc2 != error2) {
-      double delta = r_i - area12;
+        tolerance = GSL_MAX_DBL(epsabs, epsrel * fabs(area));
 
-      if (fabs(delta) <= 1.0e-5 * fabs(area12) && error12 >= 0.99 * e_i) {
-        if (!extrapolate) {
-          roundoff_type1++;
-        } else {
-          roundoff_type2++;
+        if (resasc1 != error1 && resasc2 != error2) {
+            double delta = r_i - area12;
+
+            if (fabs(delta) <= 1.0e-5 * fabs(area12) && error12 >= 0.99 * e_i) {
+                if (!extrapolate) {
+                    roundoff_type1++;
+                } else {
+                    roundoff_type2++;
+                }
+            }
+            if (iteration > 10 && error12 > e_i) {
+                roundoff_type3++;
+            }
         }
-      }
-      if (iteration > 10 && error12 > e_i) {
-        roundoff_type3++;
-      }
+
+        /* Test for roundoff and eventually set error flag */
+
+        if (roundoff_type1 + roundoff_type2 >= 10 || roundoff_type3 >= 20) {
+            error_type = 2; /* round off error */
+        }
+
+        if (roundoff_type2 >= 5) {
+            error_type2 = 1;
+        }
+
+        /* set error flag in the case of bad integrand behaviour at
+           a point of the integration range */
+
+        if (subinterval_too_small(a1, a2, b2)) {
+            error_type = 4;
+        }
+
+        /* append the newly-created intervals to the list */
+
+        update(workspace, a1, b1, area1, error1, a2, b2, area2, error2);
+
+        if (errsum <= tolerance) {
+            goto compute_result;
+        }
+
+        if (error_type) {
+            break;
+        }
+
+        if (iteration >= limit - 1) {
+            error_type = 1;
+            break;
+        }
+
+        if (iteration == 2) /* set up variables on first iteration */
+        {
+            error_over_large_intervals = errsum;
+            ertest = tolerance;
+            append_table(&table, area);
+            continue;
+        }
+
+        if (disallow_extrapolation) {
+            continue;
+        }
+
+        error_over_large_intervals += -last_e_i;
+
+        if (current_level < workspace->maximum_level) {
+            error_over_large_intervals += error12;
+        }
+
+        if (!extrapolate) {
+            /* test whether the interval to be bisected next is the
+               smallest interval. */
+
+            if (large_interval(workspace)) continue;
+
+            extrapolate = 1;
+            workspace->nrmax = 1;
+        }
+
+        if (!error_type2 && error_over_large_intervals > ertest) {
+            if (increase_nrmax(workspace)) continue;
+        }
+
+        /* Perform extrapolation */
+
+        append_table(&table, area);
+
+        qelg(&table, &reseps, &abseps);
+
+        ktmin++;
+
+        if (ktmin > 5 && err_ext < 0.001 * errsum) {
+            error_type = 5;
+        }
+
+        if (abseps < err_ext) {
+            ktmin = 0;
+            err_ext = abseps;
+            res_ext = reseps;
+            correc = error_over_large_intervals;
+            ertest = GSL_MAX_DBL(epsabs, epsrel * fabs(reseps));
+            if (err_ext <= ertest) break;
+        }
+
+        /* Prepare bisection of the smallest interval. */
+
+        if (table.n == 1) {
+            disallow_extrapolation = 1;
+        }
+
+        if (error_type == 5) {
+            break;
+        }
+
+        /* work on interval with largest error */
+
+        reset_nrmax(workspace);
+        extrapolate = 0;
+        error_over_large_intervals = errsum;
+
+    } while (iteration < limit);
+
+    *result = res_ext;
+    *abserr = err_ext;
+
+    if (err_ext == GSL_DBL_MAX) goto compute_result;
+
+    if (error_type || error_type2) {
+        if (error_type2) {
+            err_ext += correc;
+        }
+
+        if (error_type == 0) error_type = 3;
+
+        if (res_ext != 0.0 && area != 0.0) {
+            if (err_ext / fabs(res_ext) > errsum / fabs(area))
+                goto compute_result;
+        } else if (err_ext > errsum) {
+            goto compute_result;
+        } else if (area == 0.0) {
+            goto return_error;
+        }
     }
 
-    /* Test for roundoff and eventually set error flag */
+    /*  Test on divergence. */
 
-    if (roundoff_type1 + roundoff_type2 >= 10 || roundoff_type3 >= 20) {
-      error_type = 2; /* round off error */
-    }
-
-    if (roundoff_type2 >= 5) {
-      error_type2 = 1;
-    }
-
-    /* set error flag in the case of bad integrand behaviour at
-       a point of the integration range */
-
-    if (subinterval_too_small(a1, a2, b2)) {
-      error_type = 4;
-    }
-
-    /* append the newly-created intervals to the list */
-
-    update(workspace, a1, b1, area1, error1, a2, b2, area2, error2);
-
-    if (errsum <= tolerance) {
-      goto compute_result;
-    }
-
-    if (error_type) {
-      break;
-    }
-
-    if (iteration >= limit - 1) {
-      error_type = 1;
-      break;
-    }
-
-    if (iteration == 2) /* set up variables on first iteration */
     {
-      error_over_large_intervals = errsum;
-      ertest = tolerance;
-      append_table(&table, area);
-      continue;
+        double max_area = GSL_MAX_DBL(fabs(res_ext), fabs(area));
+
+        if (!positive_integrand && max_area < 0.01 * resabs0) goto return_error;
     }
 
-    if (disallow_extrapolation) {
-      continue;
+    {
+        double ratio = res_ext / area;
+
+        if (ratio < 0.01 || ratio > 100.0 || errsum > fabs(area))
+            error_type = 6;
     }
 
-    error_over_large_intervals += -last_e_i;
-
-    if (current_level < workspace->maximum_level) {
-      error_over_large_intervals += error12;
-    }
-
-    if (!extrapolate) {
-      /* test whether the interval to be bisected next is the
-         smallest interval. */
-
-      if (large_interval(workspace)) continue;
-
-      extrapolate = 1;
-      workspace->nrmax = 1;
-    }
-
-    if (!error_type2 && error_over_large_intervals > ertest) {
-      if (increase_nrmax(workspace)) continue;
-    }
-
-    /* Perform extrapolation */
-
-    append_table(&table, area);
-
-    qelg(&table, &reseps, &abseps);
-
-    ktmin++;
-
-    if (ktmin > 5 && err_ext < 0.001 * errsum) {
-      error_type = 5;
-    }
-
-    if (abseps < err_ext) {
-      ktmin = 0;
-      err_ext = abseps;
-      res_ext = reseps;
-      correc = error_over_large_intervals;
-      ertest = GSL_MAX_DBL(epsabs, epsrel * fabs(reseps));
-      if (err_ext <= ertest) break;
-    }
-
-    /* Prepare bisection of the smallest interval. */
-
-    if (table.n == 1) {
-      disallow_extrapolation = 1;
-    }
-
-    if (error_type == 5) {
-      break;
-    }
-
-    /* work on interval with largest error */
-
-    reset_nrmax(workspace);
-    extrapolate = 0;
-    error_over_large_intervals = errsum;
-
-  } while (iteration < limit);
-
-  *result = res_ext;
-  *abserr = err_ext;
-
-  if (err_ext == GSL_DBL_MAX) goto compute_result;
-
-  if (error_type || error_type2) {
-    if (error_type2) {
-      err_ext += correc;
-    }
-
-    if (error_type == 0) error_type = 3;
-
-    if (res_ext != 0.0 && area != 0.0) {
-      if (err_ext / fabs(res_ext) > errsum / fabs(area)) goto compute_result;
-    } else if (err_ext > errsum) {
-      goto compute_result;
-    } else if (area == 0.0) {
-      goto return_error;
-    }
-  }
-
-  /*  Test on divergence. */
-
-  {
-    double max_area = GSL_MAX_DBL(fabs(res_ext), fabs(area));
-
-    if (!positive_integrand && max_area < 0.01 * resabs0) goto return_error;
-  }
-
-  {
-    double ratio = res_ext / area;
-
-    if (ratio < 0.01 || ratio > 100.0 || errsum > fabs(area)) error_type = 6;
-  }
-
-  goto return_error;
+    goto return_error;
 
 compute_result:
 
-  *result = sum_results(workspace);
-  *abserr = errsum;
+    *result = sum_results(workspace);
+    *abserr = errsum;
 
 return_error:
 
-  if (error_type > 2) error_type--;
+    if (error_type > 2) error_type--;
 
-  if (error_type == 0) {
-    return 0;
-  } else if (error_type == 1) {
-    return GSL_EMAXITER;
-  } else if (error_type == 2) {
-    return GSL_EROUND;
-  } else if (error_type == 3) {
-    return GSL_ESING;
-  } else if (error_type == 4) {
-    return GSL_EROUND;
-  } else if (error_type == 5) {
-    return GSL_EDIVERGE;
-  } else {
-    return GSL_EFAILED;
-  }
+    if (error_type == 0) {
+        return 0;
+    } else if (error_type == 1) {
+        return GSL_EMAXITER;
+    } else if (error_type == 2) {
+        return GSL_EROUND;
+    } else if (error_type == 3) {
+        return GSL_ESING;
+    } else if (error_type == 4) {
+        return GSL_EROUND;
+    } else if (error_type == 5) {
+        return GSL_EDIVERGE;
+    } else {
+        return GSL_EFAILED;
+    }
 }

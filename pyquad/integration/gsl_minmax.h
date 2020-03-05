@@ -63,11 +63,11 @@ INLINE_FUN double GSL_MAX_DBL(double a, double b) { return GSL_MAX(a, b); }
 INLINE_FUN double GSL_MIN_DBL(double a, double b) { return GSL_MIN(a, b); }
 
 INLINE_FUN long double GSL_MAX_LDBL(long double a, long double b) {
-  return GSL_MAX(a, b);
+    return GSL_MAX(a, b);
 }
 
 INLINE_FUN long double GSL_MIN_LDBL(long double a, long double b) {
-  return GSL_MIN(a, b);
+    return GSL_MIN(a, b);
 }
 #else
 #define GSL_MAX_INT(a, b) GSL_MAX(a, b)

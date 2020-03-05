@@ -46,7 +46,7 @@ static const double wgk15[8] = /* weights of the 15-point kronrod rule */
 void gsl_integration_qk15(const gsl_function *f, double a, double b,
                           double *result, double *abserr, double *resabs,
                           double *resasc) {
-  double fv1[8], fv2[8];
-  gsl_integration_qk(8, xgk15, wg15, wgk15, fv1, fv2, f, a, b, result, abserr,
-                     resabs, resasc);
+    double fv1[8], fv2[8];
+    gsl_integration_qk(8, xgk15, wg15, wgk15, fv1, fv2, f, a, b, result, abserr,
+                       resabs, resasc);
 }

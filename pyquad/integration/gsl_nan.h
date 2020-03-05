@@ -1,6 +1,6 @@
-/* integration/initialise.c
+/* gsl_nan.h
  *
- * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2007 Brian Gough
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2007 Gerard Jungman, Brian Gough
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +18,29 @@
  * USA.
  */
 
-static inline void initialise(gsl_integration_workspace *workspace, double a,
-                              double b);
+#ifndef __GSL_NAN_H__
+#define __GSL_NAN_H__
 
-static inline void initialise(gsl_integration_workspace *workspace, double a,
-                              double b) {
-    workspace->size = 0;
-    workspace->nrmax = 0;
-    workspace->i = 0;
-    workspace->alist[0] = a;
-    workspace->blist[0] = b;
-    workspace->rlist[0] = 0.0;
-    workspace->elist[0] = 0.0;
-    workspace->order[0] = 0;
-    workspace->level[0] = 0;
+#ifdef INFINITY
+#define GSL_POSINF INFINITY
+#define GSL_NEGINF (-INFINITY)
+#elif defined(HUGE_VAL)
+#define GSL_POSINF HUGE_VAL
+#define GSL_NEGINF (-HUGE_VAL)
+#else
+#define GSL_POSINF (gsl_posinf())
+#define GSL_NEGINF (gsl_neginf())
+#endif
 
-    workspace->maximum_level = 0;
-}
+#ifdef NAN
+#define GSL_NAN NAN
+#elif defined(INFINITY)
+#define GSL_NAN (INFINITY / INFINITY)
+#else
+#define GSL_NAN (gsl_nan())
+#endif
+
+#define GSL_POSZERO (+0.0)
+#define GSL_NEGZERO (-0.0)
+
+#endif /* __GSL_NAN_H__ */
