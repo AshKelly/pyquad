@@ -1,6 +1,7 @@
 import scipy.integrate
 import pyquad
 import numpy as np
+import pytest
 
 
 def function1(x, a, b, c):
@@ -13,6 +14,14 @@ def function2(x, a, b, c):
 
 def function3(x, a, b, c):
     return a*a / (x + 1.0) + b * np.sin(x) + c * np.log(x + 1)
+
+
+def function4(x, a, b, c):
+    return x*a*a + c*b - c*b / (x)
+
+
+def function5(x):
+    return np.exp(x*100.0)
 
 
 def test_function1():
@@ -34,6 +43,21 @@ def test_function3():
     res2, err2  = scipy.integrate.quad(function3, 0., 4., (0.23, 0.7, 0.13),
                                        limit=200)
     assert np.abs(res1 - res2) < err1
+
+
+def test_warning1():
+    args = (function4, 0., 1., (0.3, 0.1, 0.7))
+    pytest.warns(UserWarning, pyquad.quad, *args)
+
+
+def test_warning2():
+    args = (function5, 0., 1000.)
+    pytest.warns(UserWarning, pyquad.quad, *args)
+
+
+def test_warning3():
+    args = (function3, -100., 1000., (0.23, 0.7, 0.13))
+    pytest.warns(UserWarning, pyquad.quad, *args)
 
 
 def test_grid_single_column():
