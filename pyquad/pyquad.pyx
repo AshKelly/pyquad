@@ -9,6 +9,7 @@ import warnings
 from numba import cfunc
 from libc.stdlib cimport malloc, free
 
+
 __version__ = '0.5'
 
 
