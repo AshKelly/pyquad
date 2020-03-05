@@ -40,33 +40,25 @@ jobs:
       script: python3 -m pytest tests/
 
     - stage: tests
-      name: "MacOS: Tests 3.5"
-      os: osx
-      language: generic
-      python: 3.5
-      env: PIP=pip3
-      script: python3 -m pytest tests/
-
-    - stage: tests
       name: "MacOS: Tests 3.6"
       os: osx
+      osx_image: xcode9.4
       language: generic
-      python: 3.6
       env: PIP=pip3
       script: python3 -m pytest tests/
 
     - stage: tests
-      name: "macos: tests 3.7"
+      name: "MacOS: Tests 3.7"
       os: osx
+      osx_image: xcode10.2
       language: generic
-      python: 3.7
-      env: pip=pip3
+      env: PIP=pip3
       script: python3 -m pytest tests/
 
     - stage: tests
-      name: "MacOS: Tests 3.8"
+      name: "MacOS: Tests"
       os: osx
+      osx_image: xcode11.3
       language: generic
-      python: 3.8
       env: PIP=pip3
       script: python3 -m pytest tests/
