@@ -19,8 +19,8 @@ env:
   - TWINE_USERNAME=ashjkelly
 
 script:
-  #- "$PIP install cibuildwheel"
-  - pip install git+https://github.com/YannickJadoul/cibuildwheel.git@pip-19-stalling-workaround
+  - pip install cibuildwheel
+#  - pip install git+https://github.com/YannickJadoul/cibuildwheel.git
   - cibuildwheel --output-dir wheelhouse
   - pip install twine
   - python -m twine upload wheelhouse/*.whl
