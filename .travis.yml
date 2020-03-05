@@ -21,22 +21,22 @@ jobs:
     - stage: tests
       name: "Python: 3.5 tests"
       python: 3.5
-      script: pytest tests/
+      script: python3 -m pytest tests/
 
     - stage: tests
       name: "Python: 3.6 tests"
       python: 3.6
-      script: pytest tests/
+      script: python3 -m pytest tests/
 
     - stage: tests
       name: "Python: 3.7 Tests"
       python: 3.7
-      script: pytest tests/
+      script: python3 -m pytest tests/
 
     - stage: tests
       name: "Python: 3.8 Tests"
       python: 3.8
-      script: pytest tests/
+      script: python3 -m pytest tests/
 
     - stage: tests
       name: "MacOS: Tests 3.5"
@@ -44,7 +44,7 @@ jobs:
       language: generic
       python: 3.5
       env: PIP=pip3
-      script: pytest tests/
+      script: python3 -m pytest tests/
 
     - stage: tests
       name: "MacOS: Tests 3.6"
@@ -52,7 +52,7 @@ jobs:
       language: generic
       python: 3.6
       env: PIP=pip3
-      script: pytest tests/
+      script: python3 -m pytest tests/
 
     - stage: tests
       name: "macos: tests 3.7"
@@ -60,7 +60,7 @@ jobs:
       language: generic
       python: 3.7
       env: pip=pip3
-      script: pytest tests/
+      script: python3 -m pytest tests/
 
     - stage: tests
       name: "MacOS: Tests 3.8"
@@ -68,4 +68,4 @@ jobs:
       language: generic
       python: 3.8
       env: PIP=pip3
-      script: pytest tests/
+      script: python3 -m pytest tests/
