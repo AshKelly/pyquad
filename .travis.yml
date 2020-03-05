@@ -29,6 +29,11 @@ jobs:
       script: pytest tests/
 
     - stage: tests
+      name: "Python: 3.8 Tests"
+      python: 3.8
+      script: pytest tests/
+
+    - stage: tests
       name: "MacOS: Tests"
       os: osx
       language: generic
