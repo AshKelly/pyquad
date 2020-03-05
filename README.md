@@ -108,6 +108,7 @@ get in touch via email or a pull request.
 ## Authors
 
 * **Ashley Kelly** (a.j.kelly@durham.ac.uk)
+* **Arnau Quera** (arnau.quera-bofarull@durham.ac.uk)
 
 ## License
 

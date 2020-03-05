@@ -9,6 +9,8 @@ import warnings
 from numba import cfunc
 from libc.stdlib cimport malloc, free
 
+__version__ = '0.5'
+
 cfunc_sigs = {}
 cfunc_sigs[1] = "float64(float64)"
 cfunc_sigs[2] = "float64(float64, float64)"

@@ -34,7 +34,7 @@ ext_modules = cythonize(ext_modules,
 
 setup(
     name='pyquad',
-    version='0.0.4.0',
+    version='0.5',
     author="Ashley J Kelly",
     license="LGPL-3.0",
     author_email="a.j.kelly@durham.ac.uk",
