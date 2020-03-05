@@ -34,7 +34,7 @@ jobs:
       script: pytest tests/
 
     - stage: tests
-      name: "MacOS: Tests"
+      name: "MacOS: Tests 3.7"
       os: osx
       language: generic
       python: 3.7
@@ -42,7 +42,7 @@ jobs:
       script: pytest tests/
 
     - stage: tests
-      name: "MacOS: Tests"
+      name: "MacOS: Tests 3.8"
       os: osx
       language: generic
       python: 3.8
