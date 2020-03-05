@@ -4,7 +4,7 @@ import numpy as np
 
 
 def function1(x, a, b, c):
-    return x*a*a + c*b - c*b / (x  + 1e-5)
+    return x*a*a + c*b - c*b / (x)#  + 1e-5)
 
 
 def function2(x, a, b, c):

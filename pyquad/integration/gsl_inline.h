@@ -14,7 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
  */
 
 #ifndef __GSL_INLINE_H__
@@ -40,22 +41,23 @@
    in the public header files as
 
         INLINE_DECL double gsl_foo (double x);
-	#ifdef HAVE_INLINE
-	INLINE_FUN double gsl_foo (double x) { return x+1.0; } ;
+        #ifdef HAVE_INLINE
+        INLINE_FUN double gsl_foo (double x) { return x+1.0; } ;
         #endif
 
 */
 
 #ifdef HAVE_INLINE
-#  if defined(__GNUC_STDC_INLINE__) || defined(GSL_C99_INLINE) || defined(HAVE_C99_INLINE)
-#    define INLINE_DECL static inline  /* use C99 inline */
-#    define INLINE_FUN static inline
-#  else
-#    define INLINE_DECL                /* use GNU extern inline */
-#    define INLINE_FUN extern inline
-#  endif
+#if defined(__GNUC_STDC_INLINE__) || defined(GSL_C99_INLINE) || \
+    defined(HAVE_C99_INLINE)
+#define INLINE_DECL static inline /* use C99 inline */
+#define INLINE_FUN static inline
 #else
-#  define INLINE_DECL /* */
+#define INLINE_DECL /* use GNU extern inline */
+#define INLINE_FUN extern inline
+#endif
+#else
+#define INLINE_DECL /* */
 #endif
 
 /* Range checking conditions in headers do not require any run-time
