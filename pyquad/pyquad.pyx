@@ -25,13 +25,14 @@ cfunc_sigs[12] = "float64(float64, float64, float64, float64, float64, float64, 
 
 
 GSL_ERROR_DICT = {
-    21 : "Apparent singularity detected.",
-    18 : "Failed because of roundoff error.",
+    22 : "Integral is divergent, or slowly convergent.",
+    21 : "Bad integrand behavior found in the integration interval.",
+    18 : "Cannot reach tolerance because of roundoff error.",
     14 : "Failed to reach the specified tolerance.",
-    13 : "User specified an invalid tolerance.",
+    13 : "Tolerance cannot be achieved with given epsabs and epsrel.",
     12 : "Tried to divide by zero.",
     11 : "Exceeded max number of iterations.",
-    4 : "Roundoff error detected in the extrapolation table.",
+    4 : "Iteration limit exceeds available workspace.",
     2 : "Output range error, e.g. exp(1e100).",
     1 : "Input domain error, e.g sqrt(-1).",
    -1 : "Integration failed!",

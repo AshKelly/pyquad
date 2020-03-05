@@ -199,15 +199,12 @@ static int qags(const gsl_function *f, const double a, const double b,
   *abserr = 0;
 
   if (limit > workspace->limit) {
-    // GSL_ERROR ("iteration limit exceeds available workspace", GSL_EINVAL) ;
     return GSL_EINVAL;
   }
 
   /* Test on accuracy */
 
   if (epsabs <= 0 && (epsrel < 50 * GSL_DBL_EPSILON || epsrel < 0.5e-28)) {
-    // GSL_ERROR ("tolerance cannot be achieved with given epsabs and epsrel",
-    //           GSL_EBADTOL);
     return GSL_EBADTOL;
   }
 
@@ -223,8 +220,6 @@ static int qags(const gsl_function *f, const double a, const double b,
     *result = result0;
     *abserr = abserr0;
 
-    // GSL_ERROR ("cannot reach tolerance because of roundoff error"
-    //           "on first attempt", GSL_EROUND);
     return GSL_EROUND;
   } else if ((abserr0 <= tolerance && abserr0 != resasc0) || abserr0 == 0.0) {
     *result = result0;
@@ -235,7 +230,6 @@ static int qags(const gsl_function *f, const double a, const double b,
     *result = result0;
     *abserr = abserr0;
 
-    // GSL_ERROR ("a maximum of one iteration was insufficient", GSL_EMAXITER);
     return GSL_EMAXITER;
   }
 
@@ -465,26 +459,16 @@ return_error:
   if (error_type == 0) {
     return 0;
   } else if (error_type == 1) {
-    // GSL_ERROR ("number of iterations was insufficient", GSL_EMAXITER);
     return GSL_EMAXITER;
   } else if (error_type == 2) {
-    // iGSL_ERROR ("cannot reach tolerance because of roundoff error",
-    //           GSL_EROUND);
     return GSL_EROUND;
   } else if (error_type == 3) {
-    // GSL_ERROR ("bad integrand behavior found in the integration interval",
-    //           GSL_ESING);
     return GSL_ESING;
   } else if (error_type == 4) {
-    // GSL_ERROR ("roundoff error detected in the extrapolation table",
-    //           GSL_EROUND);
     return GSL_EROUND;
   } else if (error_type == 5) {
-    // GSL_ERROR ("integral is divergent, or slowly convergent",
-    //           GSL_EDIVERGE);
     return GSL_EDIVERGE;
   } else {
-    // GSL_ERROR ("could not integrate function", GSL_EFAILED);
     return GSL_EFAILED;
   }
 }
