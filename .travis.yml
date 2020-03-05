@@ -19,11 +19,6 @@ install:
 jobs:
   include:
     - stage: tests
-      name: "Python: 3.4 Tests"
-      python: 3.5
-      script: pytest tests/
-
-    - stage: tests
       name: "Python: 3.6 Tests"
       python: 3.6
       script: pytest tests/
