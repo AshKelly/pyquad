@@ -5,11 +5,11 @@ matrix:
       sudo: required
       services:
         - docker
-      env: PIP=pip
+      env: PIP=pip3
       python: 3.5
     - os: osx
       language: generic
-      env: PIP=pip
+      env: PIP=pip3
 
 env:
   global:
@@ -19,8 +19,7 @@ env:
   - TWINE_USERNAME=ashjkelly
 
 script:
-  - pip install cibuildwheel
-#  - pip install git+https://github.com/YannickJadoul/cibuildwheel.git
+  - pip3 install cibuildwheel
   - cibuildwheel --output-dir wheelhouse
-  - pip install twine
-  - python -m twine upload wheelhouse/*.whl
+  - pip3 install twine
+  - python3 -m twine upload wheelhouse/*.whl

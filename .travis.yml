@@ -10,6 +10,8 @@ env:
 
 install:
   - |
+    $PIP --version
+    python3 --version
     $PIP install --upgrade pip
     $PIP install --upgrade setuptools
     $PIP install numpy cython scipy pytest
