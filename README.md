@@ -52,9 +52,9 @@ the benchmarks below.
 
 ## Benchmarks
 
-[Comparisons to scipy.integrate.quad()](https://raw.githubusercontent.com/AshKelly/pyquad/master/benchmarking/benchmarks.png)
+![Comparisons to scipy.integrate.quad()](https://raw.githubusercontent.com/AshKelly/pyquad/master/benchmarking/benchmarks.png)
 
-[Scaling tests](https://raw.githubusercontent.com/AshKelly/pyquad/master/benchmarking/benchmarks_pyquad.png)
+![Scaling tests](https://raw.githubusercontent.com/AshKelly/pyquad/master/benchmarking/benchmarks_pyquad.png)
 
 ## Installing
 
