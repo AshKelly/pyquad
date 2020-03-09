@@ -44,7 +44,7 @@ def test_integrand_func(x, alpha, beta, i, j, k, l):
 
 grid = np.random.random((10000000, 2))
 
-res = pyquad.quad_grid(test_integrand_func, 0, 1, grid, (1.0, 1.0, 1.0, 1.0))
+res, err = pyquad.quad_grid(test_integrand_func, 0, 1, grid, (1.0, 1.0, 1.0, 1.0))
 ```
 
 which reduces the runtime significantly. For an example of the performance see
