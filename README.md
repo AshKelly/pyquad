@@ -47,13 +47,14 @@ grid = np.random.random((10000000, 2))
 res = pyquad.quad_grid(test_integrand_func, 0, 1, grid, (1.0, 1.0, 1.0, 1.0))
 ```
 
-which reduces the runtime from 107.8 seconds to 1.7 seconds on my laptop. This
-can also be sped up by passing the kwarg `parallel=True` to `pyquad.quad_grid`
-which takes advantage of shared memory parallelisation (pthreads). The number of
-threads can be specified with the kwarg `num_threads` and one-thread-per-core
-can be forced using `pin_threads=1`.
+which reduces the runtime significantly. For an example of the performance see
+the benchmarks below.
 
-Further examples can be found [here](https://github.com/AshKelly/pyquad/blob/master/examples/jupyter_example.ipynb)
+## Benchmarks
+
+[Comparisons to scipy.integrate.quad()](https://raw.githubusercontent.com/AshKelly/pyquad/master/benchmarking/benchmarks.png)
+
+[Scaling tests](https://raw.githubusercontent.com/AshKelly/pyquad/master/benchmarking/benchmarks_pyquad.png)
 
 ## Installing
 
@@ -94,6 +95,7 @@ pytest tests
 
 inside the pyquad folder. You will need to install pytest and scipy for this
 (`pip install pytest scipy --user`)
+i
 
 ## History
 

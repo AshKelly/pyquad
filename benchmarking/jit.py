@@ -6,7 +6,7 @@ import inspect
 
 
 def jit_integrand(integrand_function):
-    jitted_function = numba.jit(integrand_function, nopython=True, fastmath=True)
+    jitted_function = numba.jit(integrand_function, nopython=True)
     no_args = len(inspect.getfullargspec(integrand_function).args)
 
     wrapped = None

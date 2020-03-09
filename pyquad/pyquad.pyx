@@ -11,12 +11,10 @@ from libc.stdlib cimport malloc, free
 
 __version__ = '0.6'
 
-
 INTEGRATION_MAP = {
     "qags": 0,
     "cquad": 1,
 }
-
 
 GSL_ERROR_DICT = {
     22 : "Integral is divergent, or slowly convergent.",
@@ -65,7 +63,7 @@ def cfunc_sig_generator(int num_args):
 
 
 def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
-         limit=200, method="qags"):
+         limit=50, method="qags"):
     num_args = len(args)
 
     # Attempt to jit the integrand
@@ -112,9 +110,9 @@ def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
 @cython.boundscheck(False)
 def quad_grid(py_integrand, double a, double b,
               np.ndarray[np.float64_t, ndim=2] grid,
-              args=(), double epsabs=1e-7, double epsrel=1e-7, int limit=200,
+              args=(), double epsabs=1e-7, double epsrel=1e-7, int limit=50,
               parallel=True, nopython=True, cache=True, int num_threads=8,
-              int pin_threads=0, method="qags"):
+              int pin_threads=1, method="qags"):
 
     cdef int integration_method = INTEGRATION_MAP[method]
 
