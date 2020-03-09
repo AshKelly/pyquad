@@ -103,7 +103,7 @@ if __name__ == "__main__":
             ax.plot(NUM_THREADS, TTS, color=color, label="{0} integrations".format(problem))
             ax.scatter(NUM_THREADS, TTS, color=color, marker="s")
 
-    ax.plot(NUM_THREADS, 16.0 / np.asarray(NUM_THREADS), color="grey",
+    ax.plot(NUM_THREADS, TTS[0] / np.asarray(NUM_THREADS), color="grey",
                linestyle="--", label="Linear")
 
     ax.legend(loc="best")
