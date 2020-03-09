@@ -63,7 +63,7 @@ def cfunc_sig_generator(int num_args):
 
 
 def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
-         limit=50, method="qags"):
+         limit=200, method="qags"):
     num_args = len(args)
 
     # Attempt to jit the integrand
@@ -110,9 +110,9 @@ def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
 @cython.boundscheck(False)
 def quad_grid(py_integrand, double a, double b,
               np.ndarray[np.float64_t, ndim=2] grid,
-              args=(), double epsabs=1e-7, double epsrel=1e-7, int limit=50,
+              args=(), double epsabs=1e-7, double epsrel=1e-7, int limit=200,
               parallel=True, nopython=True, cache=True, int num_threads=8,
-              int pin_threads=1, method="qags"):
+              int pin_threads=0, method="qags"):
 
     cdef int integration_method = INTEGRATION_MAP[method]
 
