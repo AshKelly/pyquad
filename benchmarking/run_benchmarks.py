@@ -78,7 +78,7 @@ if __name__ == "__main__":
         ax.plot(PROBLEM_SIZES, PYQUAD_TTS[threads], color=color, label="pyquad ({0} threads)".format(threads))
         ax.scatter(PROBLEM_SIZES, PYQUAD_TTS[threads], color=color, marker="x")
 
-    ax.plot(PROBLEM_SIZES, np.asarray(PROBLEM_SIZES)*PYQUAD_TTS[1][0], color="grey",
+    ax.plot(PROBLEM_SIZES, np.asarray(PROBLEM_SIZES)/PROBLEM_SIZES[0]*PYQUAD_TTS[1][0], color="grey",
                linestyle="--", label="Linear")
 
     ax.legend(loc="best")
