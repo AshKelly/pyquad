@@ -9,7 +9,6 @@ import warnings
 from numba import cfunc
 from libc.stdlib cimport malloc, free
 
-
 __version__ = '0.6'
 
 
@@ -72,11 +71,12 @@ def quad(py_integrand, double a, double b, args=(), epsabs=1e-7, epsrel=1e-7,
     # Attempt to jit the integrand
     try:
         numba_integrand = cfunc(cfunc_sig_generator(num_args+1), nopython=True,
-                                cache=True)(py_integrand)
+                                cache=True, fastmath=True)(py_integrand)
     except:
         msg = ("Failed to jit the integrand. Your integrand may use functions"+
                "which are unknown to numba and so nopython should be disabled!")
         raise NotImplementedError(msg)
+
 
     cdef integrand f = <integrand><size_t>numba_integrand.address
     cdef int integration_method = INTEGRATION_MAP[method]
@@ -132,7 +132,7 @@ def quad_grid(py_integrand, double a, double b,
     # Attempt to jit the integrand
     try:
         numba_integrand = cfunc(cfunc_sig_generator(num_args+num_grid_args+1),
-                                nopython=nopython, cache=cache)(py_integrand)
+                    nopython=nopython, fastmath=True, cache=cache)(py_integrand)
     except:
         msg = ("Failed to jit the integrand. Your integrand may use functions"+
                "which are unknown to numba and so nopython should be disabled!")
@@ -141,8 +141,8 @@ def quad_grid(py_integrand, double a, double b,
     cdef integrand f = <integrand><size_t>numba_integrand.address
 
     # Prepare arrays to store the integration results
-    cdef np.float64_t[:] result = np.zeros(num_values, dtype="float64")
-    cdef np.float64_t[:] error = np.zeros(num_values, dtype="float64")
+    cdef np.float64_t[::1] result = np.zeros(num_values, dtype="float64")
+    cdef np.float64_t[::1] error = np.zeros(num_values, dtype="float64")
     cdef int[:] status = np.zeros(num_values, dtype=np.dtype("i"))
 
     # Store the arguments which are fixed for each integral
@@ -152,7 +152,7 @@ def quad_grid(py_integrand, double a, double b,
         p.args[i] = args[i]
     p.func = f
 
-    if parallel and nopython:
+    if parallel and nopython and (num_threads > 1):
         with nogil:
             _quad_grid_parallel_wrapper(num_args, num_grid_args, a, b, p,
                     num_values, epsabs, epsrel, limit, &flat_grid[0],
