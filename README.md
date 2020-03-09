@@ -52,9 +52,17 @@ the benchmarks below.
 
 ## Benchmarks
 
+We first compare a test integral in both pyquad and scipy,
+
 ![Comparisons to scipy.integrate.quad()](https://raw.githubusercontent.com/AshKelly/pyquad/master/benchmarking/benchmarks.png)
 
+and then we look in more detail at the scaling of pyquad with an increased
+thread count,
+
 ![Scaling tests](https://raw.githubusercontent.com/AshKelly/pyquad/master/benchmarking/benchmarks_pyquad.png)
+
+These benchmarks were carried out on cosma7 which has 28 cores (2x Intel Xeon
+Gold 5120 CPU @ 2.20GHz).
 
 ## Installing
 
