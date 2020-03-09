@@ -151,6 +151,9 @@ def quad_grid(py_integrand, double a, double b,
     p.func = f
 
     if parallel and nopython:
+        if pin_threads == 1:
+            warnings.warn("[pyquad] Pinned threads can cause strange behaviour"+
+                          "in some environments - use this feature with care!")
         with nogil:
             _quad_grid_parallel_wrapper(num_args, num_grid_args, a, b, p,
                     num_values, epsabs, epsrel, limit, &flat_grid[0],
