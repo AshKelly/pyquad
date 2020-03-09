@@ -78,7 +78,7 @@ if __name__ == "__main__":
         ax.plot(PROBLEM_SIZES, PYQUAD_TTS[threads], color=color, label="pyquad ({0} threads)".format(threads))
         ax.scatter(PROBLEM_SIZES, PYQUAD_TTS[threads], color=color, marker="x")
 
-    ax.plot(PROBLEM_SIZES, np.asarray(PROBLEM_SIZES)/PROBLEM_SIZES[0]*PYQUAD_TTS[1][0], color="grey",
+    ax.plot(PROBLEM_SIZES, np.asarray(PROBLEM_SIZES)/PROBLEM_SIZES[0]*PYQUAD_TTS[8][1], color="grey",
                linestyle="--", label="Linear")
 
     ax.legend(loc="best")
@@ -111,8 +111,8 @@ if __name__ == "__main__":
     ax.set_xlabel("Number of threads / #")
     ax.set_ylabel("Wall clock / s")
 
-    ax.set_xlim(0, 18)
-    ax.set_ylim(0, 18)
+    ax.set_xlim(0, max(NUM_THREADS)+1)
+    ax.set_ylim(0, max(NUM_THREADS)+1)
 
     fig.tight_layout()
     fig.savefig("benchmarks_pyquad.png", dpi=300)
