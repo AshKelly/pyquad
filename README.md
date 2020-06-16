@@ -62,7 +62,8 @@ thread count,
 ![Scaling tests](https://raw.githubusercontent.com/AshKelly/pyquad/master/benchmarking/benchmarks_pyquad.png)
 
 These benchmarks were carried out on cosma7 which has 28 cores (2x Intel Xeon
-Gold 5120 CPU @ 2.20GHz).
+Gold 5120 CPU @ 2.20GHz). Perfect scaling was never to be expected, given the problem
+becomes completely memorybound with a high core count.
 
 ## Installing
 
