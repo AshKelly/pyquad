@@ -21,7 +21,6 @@ env:
 script:
   - pip3 install cibuildwheel
   - cibuildwheel --output-dir wheelhouse
-  - python3 setup.py sdist
   - pip3 install twine
-  - python3 -m twine upload wheelhouse/*.whl
-  - python3 -m twine upload dist/*.tar.gz
+  - python3 -m twine upload wheelhouse/*
+  - python3 -m twine upload dist/*
