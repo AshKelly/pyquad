@@ -48,7 +48,7 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU General Public License (GPL)"
     ],
-    install_requires=['cython>=0.28.0', 'numpy>=1.16.0', 'numba>=0.40.0'],
+    install_requires=['cython', 'numpy', 'numba'],
     extras_require={
         'test': ['pytest', 'scipy'],
     },
