@@ -14,6 +14,7 @@ install:
     python3 --version
     $PIP install --upgrade pip
     $PIP install --upgrade setuptools
+    $PIP install wheel
     $PIP install numpy cython scipy pytest
     $PIP install -e .
 
