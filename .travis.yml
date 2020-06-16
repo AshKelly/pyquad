@@ -1,68 +1,26 @@
-language: python
-
-compiler: gcc
-
-sudo: required
-
-dist: bionic
+matrix:
+  include:
+    - os: linux
+      language: python
+      sudo: required
+      services:
+        - docker
+      env: PIP=pip3
+      python: 3.5
+    - os: osx
+      language: generic
+      env: PIP=pip3
 
 env:
   global:
-    PIP=pip3
+  - CIBW_SKIP="cp27-* cp34-*"
+  - CIBW_BEFORE_BUILD="pip install pip --upgrade; pip install wheel; pip install llvmlite --prefer-binary; pip install cython numpy numba --only-binary all; python3 setup.py sdist"
+  - CIBW_BUILD_VERBOSITY="3"
+  - TWINE_USERNAME=ashjkelly
 
-install:
-  - |
-    $PIP --version
-    python3 --version
-    $PIP install --upgrade pip
-    $PIP install --upgrade setuptools
-    $PIP install wheel 
-    pip install llvmlite --prefer-binary
-    $PIP install numpy cython scipy pytest
-    $PIP install -e .
-
-jobs:
-  include:
-    - stage: tests
-      name: "Python: 3.5 tests"
-      python: 3.5
-      script: python3 -m pytest tests/
-
-    - stage: tests
-      name: "Python: 3.6 tests"
-      python: 3.6
-      script: python3 -m pytest tests/
-
-    - stage: tests
-      name: "Python: 3.7 Tests"
-      python: 3.7
-      script: python3 -m pytest tests/
-
-    - stage: tests
-      name: "Python: 3.8 Tests"
-      python: 3.8
-      script: python3 -m pytest tests/
-
-    - stage: tests
-      name: "MacOS: Tests 3.7"
-      os: osx
-      osx_image: xcode9.4
-      language: generic
-      env: PIP=pip3
-      script: python3 -m pytest tests/
-
-    - stage: tests
-      name: "MacOS: Tests 3.8"
-      os: osx
-      osx_image: xcode10.2
-      language: generic
-      env: PIP=pip3
-      script: python3 -m pytest tests/
-
-    - stage: tests
-      name: "MacOS: Tests"
-      os: osx
-      osx_image: xcode11.3
-      language: generic
-      env: PIP=pip3
-      script: python3 -m pytest tests/
+script:
+  - pip3 install cibuildwheel
+  - cibuildwheel --output-dir wheelhouse
+  - pip3 install twine
+  - python3 -m twine upload wheelhouse/*.whl
+  - python3 -m twine upload dist/*.tar.gz
