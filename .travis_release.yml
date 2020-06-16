@@ -1,8 +1,8 @@
-matrix:
+jobs:
   include:
     - os: linux
+      dist: bionic
       language: python
-      sudo: required
       services:
         - docker
       env: PIP=pip3
@@ -14,7 +14,7 @@ matrix:
 env:
   global:
   - CIBW_SKIP="cp27-* cp34-* cp35-*"
-  - CIBW_BEFORE_BUILD="pip3 install pip --upgrade; pip3 install wheel; pip3 install llvmlite --only-binary all; pip3 install cython numpy numba --only-binary all"
+  - CIBW_BEFORE_BUILD="pip install pip --upgrade; pip install wheel; pip install llvmlite --only-binary all; pip install cython numpy numba --only-binary all"
   - CIBW_BUILD_VERBOSITY="3"
   - TWINE_USERNAME=ashjkelly
 
