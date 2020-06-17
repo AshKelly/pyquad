@@ -1,23 +1,18 @@
 language: python
-
 compiler: gcc
-
-sudo: required
-
 dist: bionic
-
 env:
   global:
     PIP=pip3
+    PYTHON=python3
 
 install:
   - |
     $PIP --version
-    python3 --version
+    $PYTHON --version
     $PIP install --upgrade pip
     $PIP install --upgrade setuptools
-    $PIP install wheel 
-    pip install llvmlite --prefer-binary
+    $PIP install llvmlite --prefer-binary
     $PIP install numpy cython scipy pytest
     $PIP install -e .
 

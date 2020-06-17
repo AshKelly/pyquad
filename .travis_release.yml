@@ -5,28 +5,26 @@ jobs:
       language: python
       services:
         - docker
-      env: PIP=pip3
+      env:
+        PIP=pip3
+        PYTHON=python3
       python: 3.6
+
     - os: osx
       language: generic
-      env: PIP=pip3
+      env:
+        PIP=pip3
+        PYTHON=python3
 
 env:
   global:
-  - CIBW_SKIP="cp27-* cp34-* cp35-* pp27-* pp36-*"
+  - CIBW_SKIP="cp27-* cp34-* pp27-* pp36-*"
   - CIBW_BEFORE_BUILD="pip install pip --upgrade; pip install cython numpy numba --only-binary all"
   - CIBW_BUILD_VERBOSITY="3"
   - TWINE_USERNAME=ashjkelly
 
 script:
-  - pip3 install cibuildwheel==1.4.2
+  - $PIP install cibuildwheel==1.4.2
   - cibuildwheel --output-dir wheelhouse
-  - pip3 install twine
-  - python3 -m twine upload wheelhouse/*.whl
-  - pip3 install --upgrade pip
-  - pip3 install --upgrade setuptools
-  - pip3 install wheel
-  - pip3 install llvmlite --prefer-binary
-  - pip3 install numpy cython scipy pytest
-  - python3 setup.py sdist
-  - python3 -m twine upload dist/*.tar.gz
+  - $PIP install twine
+  - $PYTHON -m twine upload wheelhouse/*.whl
