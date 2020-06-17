@@ -1,63 +1,30 @@
-language: python
-compiler: gcc
-dist: bionic
-env:
-  global:
-    PIP=pip3
-    PYTHON=python3
-
-install:
-  - |
-    $PIP --version
-    $PYTHON --version
-    $PIP install --upgrade pip
-    $PIP install --upgrade setuptools
-    $PIP install llvmlite --prefer-binary
-    $PIP install numpy cython scipy pytest
-    $PIP install -e .
-
 jobs:
   include:
-    - stage: tests
-      name: "Python: 3.5 tests"
-      python: 3.5
-      script: python3 -m pytest tests/
-
-    - stage: tests
-      name: "Python: 3.6 tests"
+    - os: linux
+      dist: bionic
+      language: python
+      services:
+        - docker
+      env:
+        PIP=pip3
+        PYTHON=python3
       python: 3.6
-      script: python3 -m pytest tests/
 
-    - stage: tests
-      name: "Python: 3.7 Tests"
-      python: 3.7
-      script: python3 -m pytest tests/
-
-    - stage: tests
-      name: "Python: 3.8 Tests"
-      python: 3.8
-      script: python3 -m pytest tests/
-
-    - stage: tests
-      name: "MacOS: Tests 3.7"
-      os: osx
-      osx_image: xcode9.4
+    - os: osx
       language: generic
-      env: PIP=pip3
-      script: python3 -m pytest tests/
+      env:
+        PIP=pip3
+        PYTHON=python3
 
-    - stage: tests
-      name: "MacOS: Tests 3.8"
-      os: osx
-      osx_image: xcode10.2
-      language: generic
-      env: PIP=pip3
-      script: python3 -m pytest tests/
+env:
+  global:
+  - CIBW_SKIP="cp27-* cp34-* pp27-* pp36-*"
+  - CIBW_BEFORE_BUILD="pip install pip --upgrade; pip install cython numpy numba --only-binary all"
+  - CIBW_BUILD_VERBOSITY="3"
+  - TWINE_USERNAME=ashjkelly
 
-    - stage: tests
-      name: "MacOS: Tests"
-      os: osx
-      osx_image: xcode11.3
-      language: generic
-      env: PIP=pip3
-      script: python3 -m pytest tests/
+script:
+  - $PIP install cibuildwheel==1.4.2
+  - cibuildwheel --output-dir wheelhouse
+  - $PIP install twine
+  - $PYTHON -m twine upload wheelhouse/*.whl
