@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/AshKelly/pyquad.svg?branch=master)](https://travis-ci.com/AshKelly/pyquad)
+[![DOI](https://zenodo.org/badge/161926338.svg)](https://zenodo.org/badge/latestdoi/161926338)
 
 # pyquad
 
