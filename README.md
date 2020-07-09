@@ -122,7 +122,24 @@ get in touch via email or a pull request.
 * **Ashley Kelly** (a.j.kelly@durham.ac.uk)
 * **Arnau Quera** (arnau.quera-bofarull@durham.ac.uk)
 
+## Citations
+
+Please use the following citation:
+
+```
+@software{kelly:2020,
+  author       = {Ashley J. Kelly},
+  title        = {pyquad},
+  month        = jul,
+  year         = 2020,
+  publisher    = {Zenodo},
+  version      = {0.6.4},
+  doi          = {10.5281/zenodo.3936959},
+  url          = {https://doi.org/10.5281/zenodo.3936959}
+}
+```
+
 ## License
 
-This project is licensed under the LGPL v3.0 License - see the
+This project is licensed under the GPL v3.0 License - see the
 [LICENSE.md](LICENSE.md) file for details
